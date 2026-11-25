@@ -1,0 +1,402 @@
+/* ODIN · Anmeldebildschirm „Tresor“
+   Person wählen, dann PIN (geprüft auf dem Rechner, tirge_helfer/tresor.py) – oder Microsoft-Anmeldung.
+   Bewegung nach den Skills in .claude/skills (emil-design-eng, choreograph, better-ui):
+   - Eine führende Bewegung je Phase (Rad → Bolzen → Tür → Durchflug), Übergaben überlappen leicht.
+   - Nur transform und opacity werden animiert (Web Animations API in anmeldung.js), alles jederzeit überspringbar.
+   - prefers-reduced-motion: nur Überblendung. Hover-Effekte nur bei echter Maus.
+   Metall, Licht und Rauschen sind reine Verläufe – keine Bilder aus dem Netz. */
+
+.anm {
+  --d: clamp(220px, min(29vw, 54vh), 420px);
+  --anm-wand-1: #F5F2EE; --anm-wand-2: #E9E4DE; --anm-wand-3: #D8D1C9;
+  --anm-ink: #231F20; --anm-leise: #6E6767; --anm-linie: oklch(0.25 0.01 40 / 0.10);
+  --anm-kachel: oklch(1 0 0 / 0.55); --anm-kachel-hover: oklch(1 0 0 / 0.85); --anm-kachel-licht: oklch(1 0 0 / 0.9);
+  --anm-feld: oklch(1 0 0 / 0.7);
+  --anm-schatten: 0 50px 90px -40px oklch(0.25 0.03 45 / 0.55), 0 22px 36px -22px oklch(0.25 0.03 45 / 0.45);
+  --anm-rot: #D0141C; --anm-fehler: #9E1A13; --anm-ok: #17784A;
+  --anm-rauschen: 0.09; --anm-akzent-glut: oklch(0.55 0.2 27 / 0.07);
+  --anm-strahl: oklch(0.97 0.05 75 / 0.9);
+  /* Stahl: hell, mittel, dunkel – wirkt im Hellen etwas heller belichtet */
+  --s1: #ECEBE9; --s2: #B8B6B3; --s3: #7F7D7A; --s4: #4E4C4A;
+  position: fixed; inset: 0; z-index: 2000;
+  display: grid; overflow: auto; overscroll-behavior: contain;
+  color: var(--anm-ink); font-family: var(--text); font-size: 15px; line-height: 1.5;
+  -webkit-tap-highlight-color: transparent;
+  isolation: isolate;
+}
+.anm[hidden] { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="auto"] .anm {
+    --anm-wand-1: #251D19; --anm-wand-2: #15110F; --anm-wand-3: #0A0807;
+    --anm-ink: #F4EFEC; --anm-leise: #A69C97; --anm-linie: oklch(1 0 0 / 0.09);
+    --anm-kachel: oklch(1 0 0 / 0.045); --anm-kachel-hover: oklch(1 0 0 / 0.08); --anm-kachel-licht: oklch(1 0 0 / 0.16);
+    --anm-feld: oklch(1 0 0 / 0.06);
+    --anm-schatten: 0 60px 110px -40px oklch(0 0 0 / 0.9), 0 24px 40px -20px oklch(0 0 0 / 0.75);
+    --anm-rot: #FF4A50; --anm-fehler: #FF8F85; --anm-ok: #5CCB8F;
+    --anm-rauschen: 0.12; --anm-akzent-glut: oklch(0.55 0.2 27 / 0.12);
+    --anm-strahl: oklch(0.86 0.11 70 / 0.85);
+    --s1: #D9D8D6; --s2: #9E9C99; --s3: #6A6865; --s4: #3C3A38;
+  }
+}
+:root[data-theme="dunkel"] .anm {
+  --anm-wand-1: #251D19; --anm-wand-2: #15110F; --anm-wand-3: #0A0807;
+  --anm-ink: #F4EFEC; --anm-leise: #A69C97; --anm-linie: oklch(1 0 0 / 0.09);
+  --anm-kachel: oklch(1 0 0 / 0.045); --anm-kachel-hover: oklch(1 0 0 / 0.08); --anm-kachel-licht: oklch(1 0 0 / 0.16);
+  --anm-feld: oklch(1 0 0 / 0.06);
+  --anm-schatten: 0 60px 110px -40px oklch(0 0 0 / 0.9), 0 24px 40px -20px oklch(0 0 0 / 0.75);
+  --anm-rot: #FF4A50; --anm-fehler: #FF8F85; --anm-ok: #5CCB8F;
+  --anm-rauschen: 0.12; --anm-akzent-glut: oklch(0.55 0.2 27 / 0.12);
+  --anm-strahl: oklch(0.86 0.11 70 / 0.85);
+  --s1: #D9D8D6; --s2: #9E9C99; --s3: #6A6865; --s4: #3C3A38;
+}
+
+/* ---------- Wand: warmes Licht von oben links, ein Hauch Rot, feines Korn ---------- */
+.anm-grund, .anm-strahl { position: fixed; inset: 0; pointer-events: none; z-index: -1; }
+.anm-grund {
+  background:
+    radial-gradient(60% 55% at 88% 96%, var(--anm-akzent-glut), transparent 70%),
+    radial-gradient(130% 95% at 24% 12%, var(--anm-wand-1) 0%, var(--anm-wand-2) 50%, var(--anm-wand-3) 100%);
+}
+.anm-grund::after {
+  content: ""; position: absolute; inset: 0; opacity: var(--anm-rauschen);   /* ohne Mischmodus: neben dem 3D-Tresor gäbe das ein helles Rechteck */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* Lichtkegel, der beim Öffnen aus dem Tresor fällt (Lage setzt anmeldung.js auf die Tür) */
+.anm-strahl {
+  opacity: 0;
+  background: radial-gradient(circle at var(--sx, 30%) var(--sy, 50%), var(--anm-strahl) 0, oklch(0.8 0.12 65 / 0.35) 14%, transparent 46%);
+}
+
+/* ---------- Bühne: Tresor links, Tafel rechts (schmal: untereinander) ---------- */
+.anm-buehne {
+  margin: auto; display: grid; grid-template-columns: auto 380px; align-items: center;
+  gap: clamp(56px, 7.5vw, 120px); padding: 56px 40px;
+}
+.anm[data-layout="mitte"] .anm-buehne { grid-template-columns: auto; justify-items: center; gap: calc(var(--d) * 0.2 + 12px); }
+.anm[data-layout="mitte"] .anm-tafel { text-align: center; width: auto; min-height: 118px; }   /* Platz für den Gruß: die Tür springt nicht */
+@media (max-width: 820px) {
+  .anm { --d: min(60vw, 34vh, 260px); }
+  .anm-buehne { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: calc(var(--d) * 0.16 + 14px);
+    padding: calc(var(--d) * 0.12 + 28px) 16px 40px; width: 100%; box-sizing: border-box; }
+}
+
+/* ---------- Tresor ---------- */
+.anm-tresor { position: relative; width: var(--d); height: var(--d); perspective: calc(var(--d) * 3.2); }
+/* Schlagschatten außerhalb des 3D-Raums: sonst zeichnet Chrome den weichen Rand als sichtbares Rechteck */
+.anm-tresor::before { content: ""; position: absolute; inset: calc(var(--d) * -0.08); border-radius: 50%; box-shadow: var(--anm-schatten); }
+.anm-kipp { position: absolute; inset: 0; transform-style: preserve-3d;
+  transition: transform 1400ms cubic-bezier(0.23, 1, 0.32, 1); }
+
+/* Zarge: der Rahmen in der Wand, mit Fuge, Schließblechen und Scharnieren */
+.anm-zarge {
+  position: absolute; inset: calc(var(--d) * -0.08); border-radius: 50%;
+  background:
+    repeating-radial-gradient(circle, oklch(1 0 0 / 0.05) 0 1px, oklch(0 0 0 / 0.05) 1px 2px, transparent 2px 3px),
+    conic-gradient(from 200deg, var(--s3), var(--s2) 40deg, var(--s4) 110deg, var(--s3) 170deg, var(--s2) 230deg, var(--s4) 300deg, var(--s3));
+  box-shadow: inset 0 2px 1px oklch(1 0 0 / 0.35), inset 0 -3px 4px oklch(0 0 0 / 0.35);
+}
+.anm-zarge::before {         /* die Öffnung – dunkel, bis die Tür aufgeht */
+  content: ""; position: absolute; inset: calc(var(--d) * 0.068); border-radius: 50%;
+  background: radial-gradient(circle, #1a1310 0%, #0b0807 70%, #050404 100%);
+  box-shadow: inset 0 calc(var(--d) * 0.012) calc(var(--d) * 0.03) oklch(0 0 0 / 0.85), 0 1px 0 oklch(1 0 0 / 0.3);
+}
+.anm-schliess { position: absolute; left: 50%; top: 50%; width: calc(var(--d) * 0.05); height: calc(var(--d) * 0.042);
+  margin: calc(var(--d) * -0.021) 0 0; transform-origin: 0 50%;
+  transform: rotate(var(--w)) translateX(calc(var(--d) * 0.506)); border-radius: 3px;
+  background: linear-gradient(90deg, #050404, #1d1715); box-shadow: inset 0 1px 2px oklch(0 0 0 / 0.8), 0 1px 0 oklch(1 0 0 / 0.18); }
+.anm-scharnier { position: absolute; left: calc(var(--d) * -0.072); width: calc(var(--d) * 0.095); height: calc(var(--d) * 0.12);
+  border-radius: calc(var(--d) * 0.02);
+  background: linear-gradient(90deg, var(--s4), var(--s1) 38%, var(--s2) 55%, var(--s4));
+  box-shadow: 0 4px 8px -2px oklch(0 0 0 / 0.5), inset 0 1px 0 oklch(1 0 0 / 0.4); }
+.anm-scharnier.o { top: 25%; } .anm-scharnier.u { bottom: 25%; }
+.anm-scharnier::after { content: ""; position: absolute; inset: 22% 30%; border-radius: 999px;
+  background: linear-gradient(90deg, var(--s3), var(--s1), var(--s3)); box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.25); }
+
+/* Licht im Inneren und an der Fuge (Druckausgleich) */
+.anm-innen { position: absolute; inset: calc(var(--d) * -0.012); border-radius: 50%; opacity: 0;
+  background: radial-gradient(circle, #FFFBF2 0%, #FFE9BF 16%, #F6BF76 36%, #C47634 60%, #6A3412 82%, #24100A 100%);
+  box-shadow: inset 0 0 calc(var(--d) * 0.08) oklch(0.2 0.05 50 / 0.8); }
+.anm-innen svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.anm-fuge { position: absolute; inset: calc(var(--d) * -0.012); border-radius: 50%; opacity: 0;
+  box-shadow: 0 0 0 1.5px #FFE3B0, 0 0 calc(var(--d) * 0.07) calc(var(--d) * 0.012) oklch(0.85 0.13 70 / 0.8); }
+
+/* Tür: Scharnier links, Stärke aus gestaffelten Scheiben */
+.anm-tuer { position: absolute; inset: 0; transform-style: preserve-3d; transform-origin: 0% 50%; }
+.anm-kante { position: absolute; inset: 0; border-radius: 50%; transform: translateZ(calc(var(--z) * var(--d) * -0.0025));
+  background: linear-gradient(160deg, #7a7875, #3a3836 60%, #2a2927); box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.08); }
+.anm-kante.rueck { background:
+  repeating-radial-gradient(circle, oklch(1 0 0 / 0.04) 0 1px, transparent 1px 3px),
+  conic-gradient(from 30deg, #5a5856, #8a8885 60deg, #3d3b39 150deg, #6f6d6a 230deg, #3d3b39 300deg, #5a5856); }
+/* 3D nur, solange sich die Tür bewegt – in Ruhe flach (Chrome zeichnet sonst den Rand der 3D-Ebene leicht sichtbar) */
+.anm[data-zustand="laden"] .anm-kipp, .anm[data-zustand="laden"] .anm-tuer,
+.anm[data-zustand="wahl"] .anm-kipp, .anm[data-zustand="wahl"] .anm-tuer { transform-style: flat; }
+.anm-front { position: absolute; inset: 0; border-radius: 50%; backface-visibility: hidden; transform: translateZ(0.5px); }
+
+.anm-bolzen i { position: absolute; left: 50%; top: 50%; width: calc(var(--d) * 0.11); height: calc(var(--d) * 0.036);
+  margin-top: calc(var(--d) * -0.018); transform-origin: 0 50%; transform: rotate(var(--w)) translateX(calc(var(--d) * 0.425)); }
+.anm-bolzen b { display: block; width: 100%; height: 100%; border-radius: 999px;
+  background: linear-gradient(180deg, #FBFBFA 0%, var(--s1) 22%, var(--s2) 48%, var(--s4) 62%, var(--s2) 86%, var(--s1) 100%);
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.55), inset -2px 0 2px oklch(0 0 0 / 0.25); }
+
+/* Gedrehtes (feinst geschliffenes) Metall: konische Glanzlichter + konzentrische Rillen */
+.anm-flaeche { position: absolute; inset: 0; border-radius: 50%;
+  background:
+    repeating-radial-gradient(circle, oklch(1 0 0 / 0.07) 0 0.6px, oklch(0 0 0 / 0.045) 0.6px 1.4px, transparent 1.4px 2.4px),
+    conic-gradient(from 18deg, var(--s2) 0deg, var(--s1) 38deg, var(--s3) 100deg, var(--s2) 150deg, var(--s1) 218deg, var(--s3) 284deg, var(--s2) 360deg);
+  box-shadow: inset 0 calc(var(--d) * 0.006) calc(var(--d) * 0.01) oklch(1 0 0 / 0.45),
+              inset 0 calc(var(--d) * -0.01) calc(var(--d) * 0.03) oklch(0 0 0 / 0.3),
+              0 calc(var(--d) * 0.008) calc(var(--d) * 0.016) oklch(0 0 0 / 0.4); }
+.anm-flaeche::before {        /* gefaster Rand: Licht läuft gegenläufig */
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  background: conic-gradient(from 198deg, var(--s2), var(--s1) 40deg, var(--s3) 100deg, var(--s2) 150deg, var(--s1) 220deg, var(--s4) 290deg, var(--s2));
+  -webkit-mask: radial-gradient(circle, transparent 0 calc(50% - var(--d) * 0.045), #000 calc(50% - var(--d) * 0.045 + 1px));
+  mask: radial-gradient(circle, transparent 0 calc(50% - var(--d) * 0.045), #000 calc(50% - var(--d) * 0.045 + 1px)); }
+.anm-flaeche::after {         /* eingedrehte Rille um das Rad */
+  content: ""; position: absolute; inset: 15%; border-radius: 50%;
+  box-shadow: inset 0 1px 1.5px oklch(0 0 0 / 0.45), 0 1px 0 oklch(1 0 0 / 0.45); }
+.anm-glanz { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; pointer-events: none; }
+.anm-glanz i { position: absolute; inset: -20%; border-radius: 50%;   /* kein Mischmodus: im 3D-Raum gäbe das ein Rechteck */
+  background: radial-gradient(circle at 34% 28%, oklch(1 0 0 / 0.26), oklch(1 0 0 / 0) 46%);
+  transition: transform 1400ms cubic-bezier(0.23, 1, 0.32, 1); }
+.anm-gravur { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.anm-gravur text { font: 700 6.4px/1 var(--display); letter-spacing: 1.9px; }
+
+/* Markierung oben (Rot der Marke) */
+.anm-marke { position: absolute; left: 50%; top: calc(27% - var(--d) * 0.05); width: calc(var(--d) * 0.034); height: calc(var(--d) * 0.03);
+  margin-left: calc(var(--d) * -0.017); background: var(--anm-rot);
+  clip-path: polygon(0 0, 100% 0, 50% 100%); filter: drop-shadow(0 1px 0 oklch(1 0 0 / 0.5)); }
+
+/* Drehrad mit Skala und ODIN-Signet */
+.anm-rad-sockel { position: absolute; inset: 27%; border-radius: 50%;
+  box-shadow: 0 calc(var(--d) * 0.018) calc(var(--d) * 0.035) oklch(0 0 0 / 0.45), 0 0 0 calc(var(--d) * 0.006) oklch(0 0 0 / 0.18); }
+.anm-rad { position: absolute; inset: 27%; border-radius: 50%; }
+.anm-rad-griff { position: absolute; inset: 0; border-radius: 50%;
+  background: repeating-conic-gradient(var(--s4) 0 1.25deg, var(--s1) 1.25deg 2.5deg); }
+.anm-rad-skala { position: absolute; inset: 7.5%; border-radius: 50%;
+  background:
+    repeating-conic-gradient(from -0.7deg, oklch(1 0 0 / 0.9) 0 1.4deg, transparent 1.4deg 36deg),
+    repeating-conic-gradient(from -0.3deg, oklch(1 0 0 / 0.5) 0 0.6deg, transparent 0.6deg 7.2deg),
+    radial-gradient(circle, #2a2928 0%, #1a1918 100%);
+  background-clip: border-box;
+  box-shadow: inset 0 1px 2px oklch(0 0 0 / 0.8), 0 1px 0 oklch(1 0 0 / 0.35); }
+.anm-rad-skala::before { content: ""; position: absolute; inset: 11%; border-radius: 50%;   /* deckt die Striche innen ab */
+  background: radial-gradient(circle, #252423 0%, #1b1a19 100%); }
+.anm-rad-skala::after { content: ""; position: absolute; left: 50%; top: 0; width: 2.4%; height: 13%; margin-left: -1.2%;
+  background: var(--anm-rot); border-radius: 0 0 2px 2px; }                          /* die Null */
+.anm-rad-zahlen span { position: absolute; left: 50%; top: 50%; width: 2em; margin: -0.6em 0 0 -1em; text-align: center;
+  font: 600 calc(var(--d) * 0.026)/1.2 var(--text); color: oklch(1 0 0 / 0.72); font-variant-numeric: tabular-nums;
+  transform: rotate(var(--w)) translateY(calc(var(--d) * -0.142)); }
+.anm-rad-kappe { position: absolute; inset: 29%; border-radius: 50%; display: grid; place-items: center;
+  background: radial-gradient(circle at 36% 30%, #FDFDFC 0%, var(--s1) 30%, var(--s2) 62%, var(--s3) 100%);
+  box-shadow: 0 calc(var(--d) * 0.006) calc(var(--d) * 0.012) oklch(0 0 0 / 0.55), inset 0 -1px 2px oklch(0 0 0 / 0.3), inset 0 1px 1px oklch(1 0 0 / 0.8); }
+.anm-rad-kappe img { width: 66%; height: 66%; border-radius: 21%; box-shadow: 0 1px 2px oklch(0 0 0 / 0.45), 0 0 0 0.5px oklch(0 0 0 / 0.3); }
+/* Glanz auf dem Rad bleibt stehen, während das Rad sich dreht */
+.anm-rad-licht { position: absolute; inset: 27%; border-radius: 50%; pointer-events: none;
+  background: conic-gradient(from 300deg, oklch(1 0 0 / 0.3), transparent 50deg, transparent 130deg, oklch(1 0 0 / 0.22) 180deg, transparent 230deg, transparent 310deg, oklch(1 0 0 / 0.3));
+  -webkit-mask: radial-gradient(circle, transparent 0 41%, #000 41.5%); mask: radial-gradient(circle, transparent 0 41%, #000 41.5%); }
+
+/* ---------- Tafel ---------- */
+.anm-tafel { width: min(380px, 100%); min-width: 0; }
+@media (max-width: 820px) { .anm-tafel { width: 100%; max-width: 420px; } }
+.anm-datum { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--anm-leise); }
+.anm-titel { margin: 10px 0 6px; font-family: var(--display); font-weight: 800; font-size: clamp(32px, 3.1vw, 44px);
+  line-height: 1.04; letter-spacing: -0.015em; text-wrap: balance; }
+.anm-text { margin: 0; color: var(--anm-leise); font-size: 15px; text-wrap: pretty; }
+.anm-text b { color: var(--anm-ink); font-weight: 600; }
+.anm-chip { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; padding: 4px 10px 4px 8px; border-radius: 999px;
+  font-size: 12.5px; font-weight: 500; color: var(--anm-leise); background: var(--anm-kachel); box-shadow: 0 0 0 1px var(--anm-linie); }
+
+.anm-personen { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 22px -4px 0; padding: 4px;
+  max-height: 316px; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+.anm-person { position: relative; display: flex; align-items: center; gap: 11px; min-width: 0; padding: 9px 12px 9px 9px;
+  border: 1px solid transparent; border-radius: 14px; background: var(--anm-kachel); color: var(--anm-ink);
+  box-shadow: 0 0 0 1px var(--anm-linie); font: 500 14.5px/1.25 var(--text); text-align: left; cursor: pointer; overflow: hidden;
+  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), background-color 200ms ease, box-shadow 200ms ease; }
+.anm-person::before { content: ""; position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 240ms ease;
+  background: radial-gradient(150px circle at var(--mx, 50%) var(--my, 50%), var(--anm-kachel-licht), transparent 70%); }
+.anm-person:active { transform: scale(0.97); }
+.anm-person:focus-visible { outline: 2px solid var(--anm-ink); outline-offset: 2px; }
+.anm-person[aria-busy="true"] { box-shadow: 0 0 0 2px var(--anm-rot); }
+.anm-person .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.anm-person .zuletzt { display: block; margin-top: 1px; font-size: 11.5px; font-weight: 500; color: var(--anm-leise); }
+.anm-person .zuletzt.gesperrt { color: var(--anm-fehler); }
+.anm-avatar { position: relative; flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--farbe, #5B7083); color: #fff; font: 600 12.5px/1 var(--text); letter-spacing: 0.02em;
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.25), inset 0 -1px 0 oklch(0 0 0 / 0.15); }
+@media (hover: hover) and (pointer: fine) {
+  .anm-person:hover { background: var(--anm-kachel-hover); }
+  .anm-person:hover::before { opacity: 1; }
+}
+
+.anm-oder { display: flex; align-items: center; gap: 12px; margin: 20px 0 14px; color: var(--anm-leise); font-size: 12.5px; }
+.anm-oder::before, .anm-oder::after { content: ""; flex: 1; height: 1px; background: var(--anm-linie); }
+.anm-knopf { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 44px; padding: 0 16px;
+  border: 1px solid transparent; border-radius: 12px; background: var(--anm-kachel); color: var(--anm-ink); cursor: pointer;
+  box-shadow: 0 0 0 1px var(--anm-linie); font: 600 14.5px/1 var(--text);
+  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), background-color 200ms ease; }
+.anm-knopf.breit { width: 100%; }
+.anm-knopf.primaer { background: var(--anm-rot); color: #fff; box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.2); }
+.anm-knopf.klein { min-height: 34px; padding: 0 12px; font-size: 13px; border-radius: 10px; }
+.anm-knopf:active { transform: scale(0.97); }
+.anm-knopf:focus-visible, .anm-link:focus-visible, .anm-einst summary:focus-visible, .anm-wahl button:focus-visible {
+  outline: 2px solid var(--anm-ink); outline-offset: 2px; }
+.anm-knopf[disabled] { opacity: 0.55; cursor: default; transform: none; }
+@media (hover: hover) and (pointer: fine) { .anm-knopf:hover { background: var(--anm-kachel-hover); } .anm-knopf.primaer:hover { background: var(--anm-rot); filter: brightness(1.06); } }
+.anm-ms-logo { display: grid; grid-template-columns: 7px 7px; gap: 1.5px; flex: none; }
+.anm-ms-logo i { width: 7px; height: 7px; }
+.anm-ms-logo i:nth-child(1) { background: #F25022; } .anm-ms-logo i:nth-child(2) { background: #7FBA00; }
+.anm-ms-logo i:nth-child(3) { background: #00A4EF; } .anm-ms-logo i:nth-child(4) { background: #FFB900; }
+.anm-warte { display: grid; gap: 10px; padding: 14px; border-radius: 14px; background: var(--anm-kachel); box-shadow: 0 0 0 1px var(--anm-linie); font-size: 13.5px; color: var(--anm-leise); }
+.anm-warte b { color: var(--anm-ink); font-weight: 600; }
+.anm-warte > span { text-wrap: pretty; }
+.anm-code { font: 600 24px/1.2 ui-monospace, "Cascadia Mono", Consolas, monospace; letter-spacing: 0.14em; color: var(--anm-ink); }
+.anm-reihe { display: flex; flex-wrap: wrap; gap: 8px; }
+.anm-link { padding: 0; border: 0; background: none; color: var(--anm-ink); font: 500 13px/1.4 var(--text); text-decoration: underline;
+  text-decoration-color: var(--anm-linie); text-underline-offset: 3px; cursor: pointer; border-radius: 4px; }
+
+.anm-neu { margin-top: 14px; }
+.anm-neu summary, .anm-einst summary { cursor: pointer; list-style: none; width: fit-content; border-radius: 6px;
+  font-size: 13px; color: var(--anm-leise); }
+.anm-neu summary::-webkit-details-marker, .anm-einst summary::-webkit-details-marker { display: none; }
+.anm-neu summary::before, .anm-einst summary::before { content: ""; display: inline-block; width: 6px; height: 6px; margin: 0 8px 1px 2px;
+  border: solid currentColor; border-width: 0 1.5px 1.5px 0; transform: rotate(-45deg); transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1); }
+.anm-neu[open] summary::before, .anm-einst[open] summary::before { transform: rotate(45deg); }
+.anm-neu form { display: flex; gap: 8px; margin-top: 10px; }
+.anm-feld { flex: 1; min-width: 0; min-height: 44px; padding: 0 14px; border: 1px solid var(--anm-linie); border-radius: 12px;
+  background: var(--anm-feld); color: var(--anm-ink); font: 400 15px var(--text); }
+.anm-feld:focus { outline: 2px solid var(--anm-ink); outline-offset: 1px; }
+.anm-meldung { margin: 14px 0 0; font-size: 13.5px; color: var(--anm-fehler); text-wrap: pretty; }
+.anm-meldung:empty { display: none; }
+.anm-hinweis { margin: 14px 0 0; font-size: 12.5px; color: var(--anm-leise); text-wrap: pretty; }
+
+.anm-fuss { margin-top: 26px; padding-top: 14px; border-top: 1px solid var(--anm-linie); }
+.anm-einst-inhalt { display: grid; gap: 12px; margin-top: 12px; font-size: 13px; }
+.anm-wahl { display: inline-flex; padding: 3px; gap: 2px; border-radius: 10px; background: var(--anm-kachel); box-shadow: 0 0 0 1px var(--anm-linie); width: fit-content; }
+.anm-wahl button { min-height: 30px; padding: 0 11px; border: 0; border-radius: 7px; background: none; color: var(--anm-leise);
+  font: 500 12.5px/1 var(--text); cursor: pointer; transition: background-color 160ms ease, color 160ms ease; }
+.anm-wahl button[aria-pressed="true"] { background: var(--anm-kachel-hover); color: var(--anm-ink); box-shadow: 0 0 0 1px var(--anm-linie), 0 1px 2px oklch(0 0 0 / 0.08); }
+.anm-schalter { display: inline-flex; align-items: center; gap: 9px; cursor: pointer; width: fit-content; }
+.anm-schalter input { width: 16px; height: 16px; margin: 0; accent-color: var(--anm-rot); }
+.anm-einst-zeile { display: grid; gap: 6px; }
+.anm-einst-zeile > span { color: var(--anm-leise); }
+
+/* Hinweis zum Überspringen – kommt erst, wenn die Bewegung läuft */
+.anm-tipp { position: fixed; left: 0; right: 0; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); margin: 0; text-align: center;
+  font-size: 12px; color: var(--anm-leise); opacity: 0; pointer-events: none; transition: opacity 400ms ease; }
+.anm[data-zustand="oeffnet"] .anm-tipp { opacity: 0.8; transition-delay: 500ms; }
+.anm-start { position: fixed; left: 0; right: 0; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); margin: 0; text-align: center;
+  font-size: 12.5px; color: var(--anm-leise); opacity: 0; transition: opacity 150ms ease; }
+.anm[data-zustand="laden"] .anm-start { opacity: 0.85; transition: opacity 300ms ease 700ms; }
+
+
+/* ---------- PIN ---------- */
+.anm-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.anm-pin-kopf { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 32px; max-width: 296px; }
+/* Wer gerade dran ist – zugleich der Weg zurück zur Personenwahl */
+.anm-wer { display: inline-flex; align-items: center; gap: 7px; min-width: 0; height: 32px; padding: 0 12px 0 6px;
+  border: 1px solid transparent; border-radius: 999px; background: var(--anm-kachel); box-shadow: 0 0 0 1px var(--anm-linie);
+  color: var(--anm-ink); font: 500 13px/1 var(--text); cursor: pointer;
+  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), background-color 200ms ease; }
+.anm-wer svg { flex: none; width: 16px; height: 16px; margin-right: -2px; fill: none; stroke: var(--anm-leise); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.anm-wer .anm-avatar { width: 22px; height: 22px; font-size: 9.5px; }
+.anm-wer-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.anm-wer:active { transform: scale(0.97); }
+.anm-wer:focus-visible { outline: 2px solid var(--anm-ink); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) { .anm-wer:hover { background: var(--anm-kachel-hover); } .anm-wer:hover svg { stroke: var(--anm-ink); } }
+.anm-schritt { display: inline-flex; gap: 4px; flex: none; }
+.anm-schritt i { width: 16px; height: 4px; border-radius: 999px; background: var(--anm-linie); transition: background-color 240ms ease; }
+.anm-schritt i.an { background: var(--anm-ink); }
+.anm[data-ansicht="pin"] .anm-titel { margin-top: 18px; font-size: clamp(30px, 2.6vw, 38px); }
+.anm-notiz { margin: 14px 0 0; padding: 10px 12px; border-radius: 12px; font-size: 13px; color: var(--anm-ink); text-wrap: pretty;
+  background: var(--anm-kachel); box-shadow: inset 3px 0 0 var(--anm-rot), 0 0 0 1px var(--anm-linie); }
+
+.anm-pin { margin-top: 24px; }
+.anm-pin-feld-huelle, .anm-tasten, .anm-pin .anm-hinweis { max-width: 296px; }
+.anm-pin-feld-huelle { position: relative; display: grid; place-items: center; height: 56px; border-radius: 16px;
+  border: 1px solid transparent; background: var(--anm-feld); box-shadow: 0 0 0 1px var(--anm-linie), inset 0 1px 2px oklch(0 0 0 / 0.06);
+  transition: box-shadow 160ms ease; }
+.anm-pin-feld-huelle:focus-within { box-shadow: 0 0 0 2px var(--anm-ink), inset 0 1px 2px oklch(0 0 0 / 0.06); }
+/* Das echte Eingabefeld liegt unsichtbar über den Punkten: Tastatur, Ziffernblock, Einfügen und Screenreader gehen dorthin */
+.anm-pin-feld { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; border: 0; opacity: 0;
+  font-size: 16px; color: transparent; caret-color: transparent; background: none; cursor: text; }
+.anm-punkte { display: flex; align-items: center; gap: 14px; pointer-events: none; }
+.anm-punkte i { width: 12px; height: 12px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--anm-leise);
+  transition: background-color 120ms ease, box-shadow 120ms ease; }
+.anm-punkte i.voll { background: var(--anm-ink); box-shadow: inset 0 0 0 1.5px var(--anm-ink); }
+.anm-punkte.falsch i { box-shadow: inset 0 0 0 1.5px var(--anm-fehler); }
+.anm-punkte.falsch i.voll { background: var(--anm-fehler); }
+.anm-punkte.richtig i.voll { background: var(--anm-ok); box-shadow: inset 0 0 0 1.5px var(--anm-ok); }
+.anm-pin.gesperrt .anm-punkte { opacity: 0.4; }
+.anm-pin[aria-busy="true"] .anm-punkte i.voll { animation: anm-warten 900ms ease-in-out infinite alternate; }
+@keyframes anm-warten { to { opacity: 0.45; } }
+.anm-pin .anm-meldung, .anm-pin .anm-meldung:empty { display: block; min-height: 20px; margin: 10px 2px 0; font-size: 13px; line-height: 20px; }
+.anm-pin .anm-meldung[data-art="info"] { color: var(--anm-leise); }
+.anm-uhr { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.anm-tasten { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+.anm-taste { display: grid; place-items: center; height: 52px; padding: 0; border: 1px solid transparent; border-radius: 14px;
+  background: var(--anm-kachel); box-shadow: 0 0 0 1px var(--anm-linie); color: var(--anm-ink);
+  font: 500 21px/1 var(--text); font-variant-numeric: tabular-nums; cursor: pointer; touch-action: manipulation;
+  transition: transform 120ms cubic-bezier(0.23, 1, 0.32, 1), background-color 160ms ease; }
+.anm-taste svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.anm-taste.leise { background: transparent; box-shadow: none; color: var(--anm-leise); }
+.anm-taste.ok { background: var(--anm-rot); box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.2); color: #fff; }
+.anm-taste:active { transform: scale(0.95); }
+.anm-taste:focus-visible { outline: 2px solid var(--anm-ink); outline-offset: 2px; }
+.anm-taste[disabled] { opacity: 0.4; cursor: default; transform: none; }
+@media (hover: hover) and (pointer: fine) {
+  .anm-taste:not([disabled]):hover { background: var(--anm-kachel-hover); }
+  .anm-taste.leise:not([disabled]):hover { color: var(--anm-ink); background: var(--anm-kachel); }
+  .anm-taste.ok:not([disabled]):hover { background: var(--anm-rot); filter: brightness(1.06); }
+}
+.anm-pin .anm-hinweis { margin-top: 12px; }
+@media (max-width: 820px) {
+  /* Handy: in der PIN-Ansicht rückt der Tresor zusammen, damit Feld und Ziffernfeld ohne Scrollen passen */
+  .anm[data-ansicht="pin"] { --d: min(46vw, 23vh, 200px); }
+  .anm[data-ansicht="pin"] .anm-tafel { max-width: 360px; }
+  .anm[data-ansicht="pin"] .anm-pin-kopf, .anm[data-ansicht="pin"] .anm-pin-feld-huelle, .anm[data-ansicht="pin"] .anm-tasten { max-width: none; }
+  .anm[data-ansicht="pin"] .anm-titel { margin-top: 14px; }
+  .anm-pin { margin-top: 18px; }
+  .anm-taste { height: 50px; }
+}
+@media (max-height: 760px) and (min-width: 821px) { .anm-taste { height: 46px; } .anm-pin { margin-top: 18px; } }
+
+/* ODIN 2: kantiger */
+[data-stil="v2"] .anm-person, [data-stil="v2"] .anm-knopf, [data-stil="v2"] .anm-feld, [data-stil="v2"] .anm-warte { border-radius: 4px; }
+[data-stil="v2"] .anm-wahl { border-radius: 4px; } [data-stil="v2"] .anm-wahl button { border-radius: 2px; }
+[data-stil="v2"] .anm-chip { border-radius: 4px; }
+[data-stil="v2"] .anm-taste, [data-stil="v2"] .anm-pin-feld-huelle, [data-stil="v2"] .anm-notiz { border-radius: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .anm-kipp, .anm-glanz i, .anm-person, .anm-knopf, .anm-taste, .anm-wer, .anm-punkte i { transition: none; }
+  .anm-person:active, .anm-knopf:active, .anm-taste:active, .anm-wer:active { transform: none; }
+  .anm-pin[aria-busy="true"] .anm-punkte i.voll { animation: none; }
+}
+
+/* Abmelden in der Seitenleiste */
+.seite-fuss #abmelden-knopf .ic { width: 17px; height: 17px; }
+
+/* Einstellungen als Karte auf „Datenquellen“: dieselben Bausteine mit den Farben der App */
+.anm-karte { --anm-kachel: var(--surface-200); --anm-kachel-hover: var(--surface-100); --anm-linie: var(--line);
+  --anm-ink: var(--ink); --anm-leise: var(--ink-muted); --anm-rot: var(--accent); }
+
+/* Karte „Anmeldung & PIN“ auf „Datenquellen“ */
+.anm-karte { padding: 14px 15px; font-size: 13px; color: var(--ink-2); display: grid; gap: 14px; }
+.anm-k-abschnitt { display: grid; gap: 8px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.anm-k-abschnitt b { color: var(--ink); font-weight: 600; }
+.anm-k-zeile { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.anm-k-zeile > div { display: grid; gap: 2px; }
+.anm-k-leise { color: var(--ink-muted); }
+.anm-k-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; }
+.anm-k-form .quelle-knoepfe { margin: 0; }
+.anm-k-feld { display: grid; gap: 4px; font-size: 12px; color: var(--ink-muted); }
+.anm-k-feld input { width: 120px; font-variant-numeric: tabular-nums; letter-spacing: 0.12em; }
+.anm-k-feld.waagerecht { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--ink-2); }
+.anm-k-team summary { cursor: pointer; width: fit-content; }
+.anm-k-liste { list-style: none; margin: 4px 0; padding: 0; display: grid; gap: 6px; }
+.anm-k-liste li { display: flex; align-items: center; gap: 10px; min-height: 36px; }
+.anm-k-name { display: grid; flex: 1; min-width: 0; color: var(--ink); }
+.anm-k-name .anm-k-leise { font-size: 12px; }
+.anm-avatar.klein { width: 26px; height: 26px; font-size: 10px; }
+.anm-k-ok { color: var(--ok, #17784A); }
+.anm-karte > .quelle-knoepfe { margin: 0; }

@@ -1,0 +1,239 @@
+/* ODIN · Tagesfragen (innerhalb von #inhalt.cp)
+   Bewegung nur mit Zweck und unter 300 ms, kräftiges ease-out: die Rückmeldung nach der Antwort, der Wechsel zur
+   nächsten Frage, „Fertig für heute“ (einmal am Tag). Falsch heißt „noch nicht“ – ruhiges Blau statt Rot.
+   Hover nur bei echter Maus; bei „weniger Bewegung“ schaltet cockpit.css alle Animationen ab. */
+.cp {
+  --tf-flamme: #E8590C;
+  --tf-lernen: var(--serie-1);
+  --tf-lernen-weich: color-mix(in srgb, var(--serie-1) 9%, var(--flaeche));
+  --tf-ease: var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1));
+}
+@media (prefers-color-scheme: dark) { :root[data-theme="auto"] .cp { --tf-flamme: #FF9548; --tf-lernen-weich: color-mix(in srgb, var(--serie-1) 16%, var(--flaeche)); } }
+:root[data-theme="dunkel"] .cp { --tf-flamme: #FF9548; --tf-lernen-weich: color-mix(in srgb, var(--serie-1) 16%, var(--flaeche)); }
+
+.cp .tf-reiter { margin: -6px 0 18px; flex-wrap: wrap; }
+
+/* ---------- Oben: Serie, Lose, Kalender ---------- */
+/* Links Serie und Lose übereinander, rechts der Kalender – so breit wie die Fragekarte darunter */
+.cp .tf-oben {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "serie kalender" "lose kalender";
+  gap: 12px; max-width: 720px; margin: 0 auto 14px;
+}
+.cp .tf-oben .tf-serie { grid-area: serie; }
+.cp .tf-oben .tf-lose { grid-area: lose; }
+.cp .tf-oben .tf-kalender { grid-area: kalender; }
+.cp .tf-wert-karte {
+  display: flex; gap: 12px; align-items: flex-start; min-width: 0; padding: 14px 16px;
+  background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--r-gross); box-shadow: var(--shadow-border, none);
+}
+[data-stil="v3"] .cp .tf-wert-karte { border-color: transparent; }
+.cp .tf-zahl { font-size: 28px; font-weight: 650; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.cp .tf-titel { margin-top: 5px; font-size: 12.5px; color: var(--ink-2); }
+.cp .tf-fuss { margin-top: 6px; font-size: 11.5px; line-height: 1.45; color: var(--ink-3); }
+.cp .tf-fuss .ic { width: 13px; height: 13px; margin-right: 4px; vertical-align: -2px; }
+.cp .tf-fuss.tf-wichtig { color: var(--ink); font-weight: 600; }
+.cp .tf-flamme .ic, .cp .tf-los-symbol .ic { width: 30px; height: 30px; color: var(--ink-3); }
+.cp .tf-flamme .ic { stroke-width: 1.6; }
+.cp .tf-serie.an .tf-flamme .ic { color: var(--tf-flamme); }
+.cp .tf-serie.an .tf-flamme .aussen { fill: color-mix(in srgb, var(--tf-flamme) 16%, transparent); }
+.cp .tf-serie.an .tf-flamme .innen { fill: color-mix(in srgb, var(--tf-flamme) 45%, transparent); }
+.cp .tf-los-symbol .ic { stroke-width: 1.6; }
+@keyframes tf-zahl-hoch { from { opacity: 0; transform: translateY(8px); } }
+.cp .tf-serie.hoch .tf-zahl { animation: tf-zahl-hoch 260ms var(--tf-ease) both; }
+
+.cp .tf-kalender { flex-direction: column; gap: 6px; }
+.cp .tf-kal-kopf { display: flex; align-items: center; justify-content: space-between; width: 100%; font-size: 12.5px; }
+.cp .tf-pfeil {
+  display: grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 0; border-radius: 6px;
+  background: none; color: var(--ink-2); font: inherit; font-size: 16px; line-height: 1; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.cp .tf-pfeil:disabled { opacity: .3; cursor: default; }
+.cp .tf-kal-raster { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; width: 100%; }
+.cp .tf-wt { font-size: 10px; color: var(--ink-3); text-align: center; line-height: 14px; }
+.cp .tf-tag { display: grid; place-items: center; justify-self: center; width: 18px; height: 18px; border-radius: 5px; }
+.cp .tf-tag i { display: block; width: 8px; height: 8px; border-radius: 50%; }
+.cp .tf-tag.erledigt i { background: var(--gut); }
+.cp .tf-tag.teilweise i, .cp .tf-tag.verpasst i, .cp .tf-tag.uebersprungen i { box-shadow: inset 0 0 0 1.5px var(--linie-stark); }
+.cp .tf-tag.teilweise i { background: linear-gradient(90deg, var(--gut) 50%, transparent 50%); }
+.cp .tf-tag.offen i { box-shadow: inset 0 0 0 1.5px var(--ink-2); }
+.cp .tf-tag.zukunft i, .cp .tf-tag.vor_beginn i { width: 4px; height: 4px; background: var(--linie-stark); }
+.cp .tf-tag.feiertag i, .cp .tf-tag.urlaub i { width: 8px; height: 2px; border-radius: 1px; background: var(--ink-3); opacity: .55; }
+.cp .tf-tag.frei i { background: none; }
+.cp .tf-tag.heute { box-shadow: inset 0 0 0 1px var(--linie-stark); }
+
+/* ---------- Die Fragekarte ---------- */
+.cp .tf-buehne { max-width: 720px; margin: 0 auto; }
+.cp .tf-karte { padding: 18px 20px 20px; overflow: visible; }
+.cp .tf-fortschritt { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; margin-bottom: 16px; }
+.cp .tf-fortschritt i { height: 4px; border-radius: 2px; background: var(--flaeche-3); transition: background-color 200ms ease; }
+.cp .tf-fortschritt i.jetzt { background: var(--ink-3); }
+.cp .tf-fortschritt i.richtig { background: var(--gut); }
+.cp .tf-fortschritt i.noch { background: color-mix(in srgb, var(--tf-lernen) 55%, transparent); }
+.cp .tf-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.cp .tf-frage { margin: 12px 0 16px; font-size: 19px; font-weight: 620; line-height: 1.35; letter-spacing: -.01em; text-wrap: pretty; }
+.cp .tf-antworten { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.cp .tf-antwort {
+  display: flex; align-items: center; gap: 12px; min-height: 58px; padding: 10px 14px; text-align: left;
+  border: 1px solid var(--linie-stark); border-radius: var(--r-gross); background: var(--flaeche); color: var(--ink);
+  font: inherit; font-size: 14.5px; line-height: 1.35; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: border-color 150ms ease, background-color 150ms ease, opacity 200ms ease, transform 160ms var(--tf-ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .cp .tf-antwort:not([aria-disabled="true"]):hover { border-color: var(--ink-3); background: var(--flaeche-2); }
+  .cp .tf-pfeil:not(:disabled):hover, .cp .tf-leise:hover { background: var(--flaeche-2); color: var(--ink); }
+}
+.cp .tf-antwort[aria-disabled="true"] { cursor: default; }
+.cp button.tf-antwort[aria-disabled="true"]:active,
+[data-stil="v3"] .cp button.tf-antwort[aria-disabled="true"]:active { transform: none; }
+.cp .tf-buchstabe {
+  flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 7px;
+  background: var(--flaeche-2); color: var(--ink-2); font-size: 12px; font-weight: 650; box-shadow: inset 0 0 0 1px var(--linie);
+  transition: background-color 150ms ease, color 150ms ease;
+}
+.cp .tf-antwort-text { flex: 1; min-width: 0; overflow-wrap: break-word; }
+.cp .tf-zeichen { display: grid; color: var(--gut); }
+.cp .tf-zeichen .ic { width: 18px; height: 18px; stroke-width: 2.4; }
+.cp .tf-antwort.wartet { border-color: var(--ink-2); }
+/* Nach der Antwort: die richtige grün, die eigene (wenn noch nicht richtig) ruhig blau, der Rest tritt zurück */
+.cp .tf-antworten:has(.ist-richtig) .tf-antwort:not(.ist-richtig):not(.gewaehlt) { opacity: .5; }
+.cp .tf-antwort.ist-richtig { border-color: color-mix(in srgb, var(--gut) 50%, transparent); background: var(--gut-weich); }
+.cp .tf-antwort.ist-richtig .tf-buchstabe { background: var(--gut); color: var(--flaeche); box-shadow: none; }
+.cp .tf-antwort.gewaehlt.noch { border-color: color-mix(in srgb, var(--tf-lernen) 45%, transparent); background: var(--tf-lernen-weich); }
+.cp .tf-antwort.gewaehlt.noch .tf-buchstabe { background: var(--tf-lernen); color: #FFFFFF; box-shadow: none; }
+@keyframes tf-bestaetigt { 50% { transform: scale(1.02); } }
+.cp .tf-antwort.gewaehlt.ist-richtig { animation: tf-bestaetigt 240ms var(--tf-ease); }
+
+@keyframes tf-rein { from { opacity: 0; transform: translateY(6px); } }
+.cp .tf-inhalt.rein { animation: tf-rein 220ms var(--tf-ease) both; }
+.cp .tf-rueckmeldung { display: grid; gap: 6px; margin-top: 16px; padding: 14px 16px; border-radius: var(--r-gross); animation: tf-rein 220ms var(--tf-ease) both; }
+.cp .tf-rueckmeldung.richtig { background: var(--gut-weich); }
+.cp .tf-rueckmeldung.noch { background: var(--tf-lernen-weich); }
+.cp .tf-rm-kopf { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 15px; }
+.cp .tf-rm-kopf .ic { width: 20px; height: 20px; stroke-width: 2.2; }
+.cp .tf-rueckmeldung.richtig .tf-rm-kopf { color: var(--gut); }
+.cp .tf-rueckmeldung.noch .tf-rm-kopf { color: var(--tf-lernen); }
+.cp .tf-rm-loesung { margin: 0; font-size: 15px; font-weight: 600; }
+.cp .tf-rm-text { margin: 0; line-height: 1.5; }
+.cp .tf-rueckmeldung .klein { margin: 0; }
+.cp .tf-rm-knoepfe { display: flex; justify-content: flex-end; margin-top: 6px; }
+.cp .tf-rm-knoepfe kbd { margin-left: 6px; padding: 1px 5px; border-radius: 4px; background: color-mix(in srgb, currentColor 14%, transparent); font: inherit; font-size: 10.5px; font-weight: 500; }
+.cp .tf-unten { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 14px; }
+.cp .tf-leise {
+  margin-left: auto; padding: 6px 8px; border: 0; border-radius: 6px; background: none; color: var(--ink-3);
+  font: inherit; font-size: 12.5px; cursor: pointer; transition: background-color 150ms ease, color 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+@media (hover: none) { .cp .tf-tasten, .cp .tf-rm-knoepfe kbd { display: none; } }
+
+/* ---------- Fertig, frei, übersprungen ---------- */
+.cp .tf-fertig, .cp .tf-frei { display: grid; justify-items: center; gap: 8px; padding: 14px 8px 4px; text-align: center; }
+.cp .tf-fertig h2, .cp .tf-frei h2 { font-size: 20px; }
+.cp .tf-frei p { margin: 0; color: var(--ink-2); max-width: 46ch; }
+@keyframes tf-erscheinen { from { opacity: 0; transform: scale(.9); } }
+.cp .tf-fertig-zeichen {
+  display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%;
+  background: var(--gut-weich); color: var(--gut); animation: tf-erscheinen 280ms var(--tf-ease) both;
+}
+.cp .tf-fertig-zeichen .ic { width: 28px; height: 28px; stroke-width: 2.4; }
+.cp .tf-fertig-zeichen.still { background: var(--flaeche-2); color: var(--ink-2); animation: none; }
+.cp .tf-fertig-zeichen.still .ic { stroke-width: 1.8; }
+.cp .tf-fertig-text { margin: 0; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.cp .tf-fertig .klein { margin: 0; }
+.cp .tf-rueckblick { width: 100%; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--linie); text-align: left; }
+.cp .tf-rueckblick summary { cursor: pointer; font-size: 13px; color: var(--ink-2); width: max-content; }
+.cp .tf-rueckblick ol { display: grid; gap: 12px; margin: 12px 0 0; padding: 0; list-style: none; }
+.cp .tf-rueckblick li { display: grid; gap: 3px; font-size: 13px; }
+.cp .tf-rb-antwort { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.cp .tf-rb-antwort .ic { width: 15px; height: 15px; stroke-width: 2.2; }
+.cp .tf-rueckblick li.richtig .tf-rb-antwort .ic { color: var(--gut); }
+.cp .tf-rueckblick li.noch .tf-rb-antwort .ic { color: var(--tf-lernen); }
+
+/* ---------- Team ---------- */
+.cp .tf-ziel { margin-bottom: 4px; }
+.cp .tf-ziel .karte-kopf { align-items: center; border-bottom: 0; }
+.cp .tf-ziel-zahl { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.cp .tf-balken { height: 10px; margin: 0 16px 16px; border-radius: 5px; background: var(--flaeche-3); overflow: hidden; }
+.cp .tf-balken i { display: block; width: calc(var(--anteil, 0) * 100%); height: 100%; border-radius: inherit; background: var(--gut); }
+.cp .tf-ziel-geschafft { display: flex; align-items: center; gap: 6px; margin: -6px 16px 14px; color: var(--gut); font-weight: 600; }
+.cp .tf-ziel-geschafft .ic { width: 16px; height: 16px; }
+.cp .tf-ziel .karte-leer a, .cp .tf-preis a { color: var(--ink); }
+.cp .tf-team-kacheln { margin: 16px 0 0; }
+.cp .tf-preis { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px 12px; align-items: start; padding: 14px 16px 16px; }
+.cp .tf-preis > p { grid-column: 1 / -1; margin: 0; }
+.cp .tf-preis b { font-size: 15px; }
+.cp .tf-preis-symbol .ic { width: 26px; height: 26px; color: var(--tf-flamme); stroke-width: 1.6; }
+.cp .tf-gewinner { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+.cp .tf-gewinner .ic { width: 16px; height: 16px; color: var(--ink-3); }
+.cp .tf-rang { display: grid; gap: 2px; margin: 0; padding: 8px; list-style: none; counter-reset: rang; }
+.cp .tf-rang li { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 8px; counter-increment: rang; font-size: 13px; }
+.cp .tf-rang li::before { content: counter(rang); width: 16px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.cp .tf-rang li .klein { margin-left: auto; }
+.cp .tf-rang li.ich { background: var(--flaeche-2); font-weight: 600; }
+
+/* ---------- Formulare und Listen ---------- */
+.cp .tf-formular { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 14px 16px 16px; }
+.cp .tf-breit { grid-column: 1 / -1; }
+.cp .tf-formular textarea {
+  width: 100%; padding: 8px 10px; border: 1px solid var(--linie-stark); border-radius: var(--r-mittel);
+  background: var(--flaeche); color: var(--ink); font: inherit; font-size: 13px; line-height: 1.45; resize: vertical;
+}
+.cp .tf-formular textarea:focus-visible { outline: 2px solid var(--akzent); outline-offset: 2px; }
+.cp .tf-formular input[type="text"], .cp .tf-formular select { width: 100%; max-width: none; }
+.cp .tf-antwort-felder { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.cp .tf-antwort-felder legend { margin-bottom: 5px; padding: 0; font-size: 11.5px; font-weight: 500; color: var(--ink-2); }
+.cp .tf-antwort-feld {
+  position: relative; display: flex; align-items: center; gap: 8px; padding: 3px 4px 3px 4px;
+  border: 1px solid var(--linie-stark); border-radius: var(--r-mittel); background: var(--flaeche);
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+.cp .tf-antwort-feld input[type="radio"] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.cp .tf-antwort-feld .tf-buchstabe { cursor: pointer; }
+.cp .tf-antwort-feld input[type="text"] { flex: 1; min-width: 0; padding: 6px 4px; border: 0; background: none; }
+.cp .tf-antwort-feld input[type="text"]:focus-visible { outline: 0; }
+.cp .tf-antwort-feld:focus-within { border-color: var(--ink-3); }
+.cp .tf-antwort-feld:has(input[type="radio"]:focus-visible) .tf-buchstabe { outline: 2px solid var(--akzent); outline-offset: 1px; }
+.cp .tf-antwort-feld:has(input[type="radio"]:checked) { border-color: color-mix(in srgb, var(--gut) 55%, transparent); background: var(--gut-weich); }
+.cp .tf-antwort-feld:has(input[type="radio"]:checked) .tf-buchstabe { background: var(--gut); color: var(--flaeche); box-shadow: none; }
+.cp .tf-knoepfe { display: flex; justify-content: flex-end; gap: 8px; }
+.cp .tf-liste { display: grid; margin: 0; padding: 0 16px 8px; list-style: none; }
+.cp .tf-liste > li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; padding: 12px 0; border-top: 1px solid var(--linie); font-size: 13px; }
+.cp .tf-liste > li:first-child { border-top: 0; }
+.cp .tf-liste > li.tf-formular-zeile { display: block; padding: 0; margin: 0 -16px; background: var(--flaeche-2); }
+.cp .tf-frage-zeile.aus .tf-fz-haupt { opacity: .6; }
+.cp .tf-fz-haupt { display: grid; gap: 5px; flex: 1 1 420px; min-width: 0; }
+.cp .tf-fz-antworten { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0; padding: 0; list-style: none; font-size: 12.5px; color: var(--ink-2); }
+.cp .tf-fz-antworten li { display: inline-flex; align-items: center; gap: 3px; }
+.cp .tf-fz-antworten li.richtig { color: var(--gut); font-weight: 600; }
+.cp .tf-fz-antworten .ic { width: 13px; height: 13px; stroke-width: 2.4; }
+.cp .tf-fz-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.cp .tf-fz-knoepfe { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px; }
+.cp .tf-quellen, .cp .tf-einstellungen { display: grid; gap: 12px; padding: 14px 16px 16px; }
+.cp .tf-einstellungen input[type="text"], .cp .tf-einstellungen input[type="number"], .cp .tf-einstellungen select { width: 100%; max-width: 360px; }
+.cp .tf-quelle-schalter, .cp .tf-check { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; cursor: pointer; }
+.cp .tf-quelle-schalter input, .cp .tf-check input { margin-top: 3px; }
+.cp .tf-quelle-schalter > span, .cp .tf-check > span { display: grid; gap: 2px; min-width: 0; }
+.cp .karte-kopf select { flex: none; }
+.cp .tf-verlosung { display: grid; gap: 10px; padding: 0 0 16px; }
+.cp .tf-verlosung > :not(table) { margin-inline: 16px; }
+.cp .tf-verlosung > p { margin-block: 0; }
+.cp .tf-verlosung .btn-primaer { justify-self: start; }
+.cp .tf-ziehungen { display: grid; gap: 6px; margin-block: 0; padding-left: 18px; font-size: 13px; }
+.cp .tf-ziehungen .klein { display: block; }
+.cp .tf-neu-auslosen { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px; }
+.cp .tf-neu-auslosen .feld { flex: 1 1 260px; }
+.cp .tf-neu-auslosen input[type="text"] { max-width: none; }
+.cp .tf-beirat ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 3px; }
+
+.cp .tf-stapel { display: grid; gap: 16px; }
+@media (max-width: 640px) {
+  .cp .tf-oben { grid-template-columns: minmax(0, 1fr); grid-template-areas: "serie" "lose" "kalender"; }
+  .cp .tf-antworten, .cp .tf-formular, .cp .tf-antwort-felder { grid-template-columns: minmax(0, 1fr); }
+  .cp .tf-karte { padding: 16px; }
+  .cp .tf-frage { font-size: 17px; }
+}
+
+/* Beirat-Fragen: nach der Antwort direkt ins passende Coaching-Modul */
+.cp .tf-modul { margin: 6px 0 0; font-size: 12.5px; }
+.cp .tf-modul a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--linie-stark); }
+.cp .tf-modul a:hover { border-color: var(--ink); }

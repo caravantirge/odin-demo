@@ -1,0 +1,162 @@
+/* ODIN · Beirat & Coaching (innerhalb von #inhalt.cp unter .br).
+   Bausteine aus cockpit.css/projekte.css (kopf, karte, filter, pj-chip, pj-segment, pj-krumen); ODIN 3 legt über
+   v3.css Schattenringe und Spotlight darüber. Keine Silbentrennung, nichts läuft waagrecht über: lange Wörter brechen
+   um, Raster werden auf schmalen Fenstern einspaltig. Kürzel statt Bilder der Personen. */
+
+.cp .br { min-width: 0; overflow-wrap: anywhere; hyphens: manual; }
+.cp .br h2 { font-size: 15px; }
+.cp .br-kopf { margin-bottom: 16px; }
+.cp .br-kopf > div:first-child { display: grid; gap: 8px; min-width: 0; flex: 1 1 320px; }
+.cp .br-kopf .pj-krumen { margin: 0 !important; }
+.cp .br-kopf h1 { max-width: 30ch; }
+.cp .br-kopf p.br-lage, .cp .br-lage { margin: 0; color: var(--ink-2); font-size: 14.5px; max-width: 70ch; }
+.cp .br-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.cp .br-leiste { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: 0 0 18px; }
+.cp .br-reiter { flex-wrap: wrap; max-width: 100%; }
+.cp .br-ueber { display: block; margin-bottom: 6px; color: var(--ink-3); font-size: 11.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.cp .br-einleitung { margin: 0 0 16px; max-width: 78ch; color: var(--ink-2); font-size: 13.5px; }
+
+/* ---------- Kürzel im Kreis (keine Bilder) ---------- */
+.cp .br-mono {
+  display: inline-grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: 999px;
+  background: hsl(var(--ton, 0) 32% 92%); color: hsl(var(--ton, 0) 38% 30%);
+  font-size: 10.5px; font-weight: 650; letter-spacing: .02em; font-variant-numeric: tabular-nums;
+  box-shadow: 0 0 0 1px hsl(var(--ton, 0) 25% 82%);
+}
+.cp .br-mono.gross { width: 40px; height: 40px; font-size: 13.5px; }
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="auto"] .cp .br-mono { background: hsl(var(--ton, 0) 22% 22%); color: hsl(var(--ton, 0) 45% 82%); box-shadow: 0 0 0 1px hsl(var(--ton, 0) 20% 32%); }
+}
+:root[data-theme="dunkel"] .cp .br-mono { background: hsl(var(--ton, 0) 22% 22%); color: hsl(var(--ton, 0) 45% 82%); box-shadow: 0 0 0 1px hsl(var(--ton, 0) 20% 32%); }
+.cp .br-monos { display: inline-flex; flex: none; gap: 3px; }
+.cp .br-monos .br-mono { width: 22px; height: 22px; font-size: 9px; }
+.cp .br-person { display: inline-flex; align-items: center; gap: 6px; color: var(--ink); font-size: 12.5px; font-weight: 550; text-decoration: none; }
+.cp .br-person .br-mono { width: 22px; height: 22px; font-size: 9px; }
+@media (hover: hover) and (pointer: fine) { .cp .br-person:hover span:last-child { text-decoration: underline; text-decoration-color: var(--linie-stark); text-underline-offset: 3px; } }
+
+/* ---------- Frag den Beirat: Suche und Gedanke des Tages ---------- */
+.cp .br-frag-oben { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 16px; align-items: stretch; margin-bottom: 8px; }
+@media (max-width: 1100px) { .cp .br-frag-oben { grid-template-columns: minmax(0, 1fr); } }
+.cp .br-suchkarte { display: grid; gap: 12px; align-content: start; padding: 18px 20px 16px; }
+.cp .br-such-label { font-size: 15px; font-weight: 600; color: var(--ink); }
+.cp .br-suchfeld { position: relative; display: flex; align-items: center; }
+.cp .br-suchfeld .ic { position: absolute; left: 13px; width: 18px; height: 18px; color: var(--ink-3); pointer-events: none; fill: none; stroke: currentColor; }
+.cp .br-suchfeld input {
+  width: 100%; min-width: 0; height: 46px; padding: 0 14px 0 40px; border: 1px solid var(--linie-stark); border-radius: 10px;
+  background: var(--flaeche); color: var(--ink); font: inherit; font-size: 15.5px;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.cp .br-suchfeld input::placeholder { color: var(--ink-3); }
+.cp .br-suchfeld input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px var(--akzent-weich); }
+.cp .br-haeufig { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 6px; }
+.cp .br-haeufig > .klein { margin-right: 4px; }
+.cp .br-chip {
+  display: inline-flex; align-items: center; min-height: 28px; padding: 3px 11px; border: 1px solid var(--linie); border-radius: 999px;
+  background: var(--flaeche-2); color: var(--ink); font-size: 12.5px; text-decoration: none;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+@media (hover: hover) and (pointer: fine) { .cp .br-chip:hover { border-color: var(--linie-stark); background: var(--flaeche); } }
+
+.cp .br-impuls { display: grid; gap: 8px; align-content: start; padding: 18px 20px 16px; }
+.cp .br-impuls-kopf { display: flex; align-items: center; gap: 10px; }
+.cp .br-impuls-kopf .br-ueber { margin: 0; }
+.cp .br-impuls-text { margin: 0; font-size: 17px; line-height: 1.45; font-weight: 550; letter-spacing: -.01em; color: var(--ink); text-wrap: pretty; }
+.cp .br-impuls-fuss { margin: 0; }
+.cp .br-impuls-fuss a, .cp .br-links a, .cp .br-hinweis a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--linie-stark); }
+@media (hover: hover) and (pointer: fine) { .cp .br-impuls-fuss a:hover, .cp .br-links a:hover { border-color: var(--ink); } }
+
+/* ---------- Gruppen und Karten ---------- */
+.cp .br-gruppe { margin-top: 26px; }
+.cp .br-gruppe-kopf { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin-bottom: 12px; }
+.cp .br-gruppe-kopf .klein { color: var(--ink-3); }
+.cp .br-raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 12px; }
+.cp .br-karte { display: grid; gap: 8px; align-content: start; grid-template-rows: auto 1fr auto; padding: 14px 16px; min-width: 0; color: var(--ink); text-decoration: none; }
+.cp .br-karte-titel { font-size: 14.5px; font-weight: 600; line-height: 1.35; color: var(--ink); text-wrap: pretty; }
+.cp .br-karte-text { font-size: 13px; color: var(--ink-2); line-height: 1.5; }
+.cp .br-karte-text b { color: var(--ink); font-weight: 600; }
+.cp .br-drei { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.cp .br-karte-fuss { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding-top: 10px; border-top: 1px solid var(--linie); }
+.cp .br-karte-fuss .klein { color: var(--ink-3); min-width: 0; }
+.cp .br-mitglied-karte .br-mitglied-kopf { display: flex; align-items: center; gap: 12px; }
+.cp .br-mitglied-kopf > span:last-child { display: grid; gap: 1px; min-width: 0; }
+@media (hover: hover) and (pointer: fine) {
+  .cp a.br-karte { transition: border-color 150ms ease, box-shadow 200ms ease, transform 200ms ease; }
+  .cp a.br-karte:hover { border-color: var(--linie-stark); }
+  .cp a.br-karte:hover .br-karte-titel { text-decoration: underline; text-decoration-color: var(--linie-stark); text-underline-offset: 3px; }
+  [data-stil="v3"] .cp a.br-karte:hover { transform: translateY(-1px); box-shadow: var(--shadow-pop); }
+}
+@media (prefers-reduced-motion: reduce) { [data-stil="v3"] .cp a.br-karte:hover { transform: none; } }
+.cp .br-leer { margin: 22px 0 0; padding: 16px 18px; border: 1px dashed var(--linie-stark); border-radius: var(--r-gross); color: var(--ink-2); font-size: 13.5px; }
+.cp .br-leer b { color: var(--ink); }
+.cp .br-filter { margin: 0 0 4px; }
+
+/* ---------- Situation: Perspektiven nebeneinander ---------- */
+.cp .br-perspektiven { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 14px; align-items: start; }
+.cp .br-perspektive { display: grid; gap: 10px; padding: 16px 18px 18px; }
+.cp .br-persp-kopf { display: flex; align-items: center; gap: 12px; color: var(--ink); text-decoration: none; padding-bottom: 12px; border-bottom: 1px solid var(--linie); }
+.cp .br-persp-kopf > span:last-child { display: grid; gap: 1px; min-width: 0; }
+.cp .br-persp-kopf b { font-size: 14.5px; font-weight: 600; }
+@media (hover: hover) and (pointer: fine) { .cp .br-persp-kopf:hover b { text-decoration: underline; text-decoration-color: var(--linie-stark); text-underline-offset: 3px; } }
+.cp .br-kern { margin: 2px 0 0; font-size: 15px; line-height: 1.5; font-weight: 550; color: var(--ink); text-wrap: pretty; }
+.cp .br-h3 { margin: 6px 0 0; font-size: 11.5px; font-weight: 600; color: var(--ink-3); letter-spacing: .04em; text-transform: uppercase; }
+.cp .br-schritte { margin: 0; padding-left: 22px; display: grid; gap: 6px; font-size: 13.5px; line-height: 1.5; }
+.cp .br-schritte li::marker { color: var(--ink-3); font-weight: 600; font-variant-numeric: tabular-nums; }
+.cp .br-schritte.gross { gap: 10px; font-size: 14px; padding: 2px 0 0 24px; }
+.cp .br-saetze { display: grid; gap: 8px; }
+.cp .br-satz {
+  margin: 0; padding: 9px 12px; border-left: 3px solid var(--marke, var(--accent)); border-radius: 0 var(--r-gross) var(--r-gross) 0;
+  background: var(--flaeche-2); color: var(--ink); font-size: 13.5px; line-height: 1.5;
+}
+
+/* ---------- Modul und Mitglied ---------- */
+.cp .br-zweispaltig { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 14px; align-items: start; }
+@media (max-width: 1100px) { .cp .br-zweispaltig { grid-template-columns: minmax(0, 1fr); } }
+.cp .br-spalte { display: grid; gap: 14px; min-width: 0; }
+.cp .br-block { padding: 16px 18px 18px; display: grid; gap: 10px; align-content: start; }
+.cp .br-block p { margin: 0; font-size: 14px; line-height: 1.6; }
+.cp .br-block p.klein { font-size: 12px; color: var(--ink-3); line-height: 1.45; }
+.cp .br-block > .br-ueber { margin-bottom: -2px; }
+.cp .br-kernidee p { font-size: 15.5px; line-height: 1.55; font-weight: 500; color: var(--ink); }
+.cp .br-beispiel { background: var(--flaeche-2); }
+[data-stil="v3"] .cp .br-beispiel { background: color-mix(in srgb, var(--flaeche-2) 70%, var(--flaeche)); }
+.cp .br-liste { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 13.5px; line-height: 1.5; }
+.cp .br-liste li { position: relative; padding-left: 22px; }
+.cp .br-liste li::before { content: ""; position: absolute; left: 4px; top: .62em; width: 6px; height: 6px; border-radius: 999px; background: var(--ink-3); }
+.cp .br-x li::before { content: "×"; width: auto; height: auto; top: 0; left: 3px; background: none; color: var(--kritisch); font-weight: 700; }
+.cp .br-haken li::before { content: "✓"; width: auto; height: auto; top: 0; left: 2px; background: none; color: var(--gut); font-weight: 700; }
+.cp .br-links { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 13.5px; }
+.cp .br-mitglied-titel { display: flex; align-items: center; gap: 14px; }
+.cp .br-mitglied-titel > div { display: grid; gap: 4px; min-width: 0; }
+.cp .br-ideen { margin: 0; display: grid; gap: 4px; }
+.cp .br-ideen dt { font-weight: 600; font-size: 14px; margin-top: 8px; }
+.cp .br-ideen dt:first-child { margin-top: 0; }
+.cp .br-ideen dd { margin: 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.55; }
+.cp .br-leitsatz blockquote { margin: 0; font-size: 18px; line-height: 1.4; font-weight: 550; letter-spacing: -.01em; color: var(--ink); text-wrap: balance; }
+
+/* ---------- Hinweis zur Herkunft ---------- */
+.cp .br-hinweis { display: flex; align-items: flex-start; gap: 8px; margin: 32px 0 0; padding-top: 14px; border-top: 1px solid var(--linie); color: var(--ink-3); font-size: 12px; line-height: 1.5; max-width: 90ch; }
+.cp .br-hinweis .ic { flex: none; width: 14px; height: 14px; margin-top: 2px; fill: none; stroke: currentColor; }
+
+/* ---------- Schmale Fenster ---------- */
+@media (max-width: 560px) {
+  .cp .br-suchkarte, .cp .br-impuls { padding: 14px 14px 12px; }
+  .cp .br-perspektive, .cp .br-block { padding: 14px 14px 16px; }
+  .cp .br-impuls-text { font-size: 16px; }
+  .cp .br-kopf h1 { font-size: 20px; }
+  .cp .br-reiter > a { padding-inline: 9px; }
+}
+
+/* ---------- Heute & Woche: Gedanke des Tages ---------- */
+.cp .br-heute { display: flex; align-items: flex-start; gap: 12px; margin-top: 22px; padding: 14px 16px; }
+.cp .br-heute > div { display: grid; gap: 3px; min-width: 0; }
+.cp .br-heute .br-ueber { margin: 0; }
+.cp .br-heute p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink); font-weight: 500; }
+.cp .br-heute .klein a { color: var(--ink-2); text-decoration: none; border-bottom: 1px solid var(--linie-stark); }
+.cp .br-heute > .ic { flex: none; width: 18px; height: 18px; margin-top: 2px; color: var(--ink-3); fill: none; stroke: currentColor; }
+
+/* ---------- Verbindliche Hausregeln (gehen jedem Tipp vor) ---------- */
+.cp .br-hausregel { margin: 0 0 16px; box-shadow: inset 3px 0 0 var(--ink), var(--shadow-border, 0 0 0 0 transparent); }
+.cp .br-zweispaltig .br-hausregel { margin: 0; }
+.cp .br-regeln { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 13.5px; line-height: 1.5; }
+.cp .br-hausregel p.klein { margin: 0; }
+.cp .br-hausregel a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--linie-stark); }

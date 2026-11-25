@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ODIN · Demo</title>
+<meta name="description" content="ODIN – das Betriebssystem für einen Caravan- und Wohnmobilhandel. Demo mit erfundenen Daten, läuft komplett im Browser.">
+<link rel="icon" href="img/odin-signet.svg">
+<style>
+@font-face { font-family: Inter; font-weight: 400; src: url(fonts/inter-latin-400-normal.woff2) format("woff2"); }
+@font-face { font-family: Inter; font-weight: 600; src: url(fonts/inter-latin-600-normal.woff2) format("woff2"); }
+@font-face { font-family: Archivo; font-weight: 800; src: url(fonts/archivo-latin-800-normal.woff2) format("woff2"); }
+:root { color-scheme: light dark; --bg: #F5F2EE; --bg2: #ECE7E1; --karte: #FFFFFF; --ink: #231F20; --leise: #6E6767;
+  --linie: rgba(60,40,30,.13); --rot: #D0141C; --rot-weich: rgba(208,20,28,.08); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #15110F; --bg2: #1E1815; --karte: #221B18;
+  --ink: #F4EFEC; --leise: #A69C97; --linie: rgba(255,255,255,.1); --rot: #FF4A50; --rot-weich: rgba(255,74,80,.1); } }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  background-image: radial-gradient(var(--linie) 1px, transparent 1px); background-size: 22px 22px; }
+.rahmen { max-width: 1060px; margin: 0 auto; padding: 0 16px; }
+header { padding: 64px 0 40px; display: grid; gap: 28px; grid-template-columns: 1.2fr .8fr; align-items: center; }
+.marke { display: flex; align-items: center; gap: 12px; font: 800 22px Archivo, Inter, sans-serif; letter-spacing: .02em; }
+.marke img { width: 40px; height: 40px; }
+h1 { font: 800 clamp(34px, 5.4vw, 58px)/1.04 Archivo, Inter, sans-serif; letter-spacing: -.02em; margin: 18px 0 16px; }
+h1 em { font-style: normal; color: var(--rot); }
+.unter { font-size: 18px; color: var(--leise); max-width: 34em; margin: 0 0 28px; }
+.knoepfe { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.knopf { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 22px; border-radius: 12px; font: 600 16px Inter, sans-serif;
+  background: var(--rot); color: #fff; text-decoration: none; transition: transform .16s cubic-bezier(.23,1,.32,1), box-shadow .16s; box-shadow: 0 10px 24px -12px var(--rot); }
+.knopf:hover { transform: translateY(-1px); } .knopf:active { transform: scale(.97); }
+.hinweis { font-size: 14px; color: var(--leise); }
+.zugang { background: var(--karte); border: 1px solid var(--linie); border-radius: 18px; padding: 22px; box-shadow: 0 30px 60px -40px rgba(0,0,0,.4); }
+.zugang h2 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--leise); margin: 0 0 12px; }
+.zugang ol { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
+.pin { display: inline-block; font: 600 15px ui-monospace, Consolas, monospace; letter-spacing: .2em; background: var(--rot-weich); color: var(--rot); padding: 1px 8px; border-radius: 6px; }
+section { padding: 36px 0; border-top: 1px solid var(--linie); }
+section > h2 { font: 800 28px/1.15 Archivo, Inter, sans-serif; margin: 0 0 8px; }
+section > p { color: var(--leise); max-width: 46em; margin: 0 0 22px; }
+.raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.kachel { background: var(--karte); border: 1px solid var(--linie); border-radius: 14px; padding: 16px 18px; }
+.kachel b { display: block; margin-bottom: 4px; }
+.kachel span { color: var(--leise); font-size: 14.5px; }
+.zeitstrahl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.zeitstrahl .kachel small { display: block; color: var(--rot); font-weight: 600; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; }
+footer { padding: 28px 0 48px; color: var(--leise); font-size: 13.5px; border-top: 1px solid var(--linie); }
+@media (max-width: 760px) { header { grid-template-columns: 1fr; padding-top: 36px; } .zeitstrahl { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="rahmen">
+  <header>
+    <div>
+      <div class="marke"><img src="img/odin-signet.svg" alt="">ODIN</div>
+      <h1>Ein Betriebssystem für den <em>Caravanhandel</em>.</h1>
+      <p class="unter">ODIN führt zusammen, was im Betrieb heute in Excel-Listen, Ordnern, Mails und Köpfen verteilt ist:
+        Bestand, Finanzierung, Auslieferungen, Teile, Urlaub, Projekte, Wissen. Und es hilft beim Arbeiten:
+        es versteht Sätze, prüft gegen Hausregeln und schreibt zurück in die Listen.</p>
+      <div class="knoepfe">
+        <a class="knopf" href="app.html">Demo starten →</a>
+        <span class="hinweis">Läuft komplett im Browser · kein Download · erster Start ca. 10 Sekunden</span>
+      </div>
+    </div>
+    <aside class="zugang" aria-label="Demo-Zugang">
+      <h2>So kommst du rein</h2>
+      <ol>
+        <li>„Demo starten“ klicken und kurz warten, bis der Tresor erscheint.</li>
+        <li>Eine Person wählen, z. B. <b>Anna Berg</b> (Geschäftsführung).</li>
+        <li>PIN <span class="pin">1234</span> eingeben – der Tresor öffnet sich.</li>
+        <li>Alles anklicken, ausprobieren, ändern. Neu laden = alles wieder auf Anfang.</li>
+      </ol>
+    </aside>
+  </header>
+
+  <section>
+    <h2>Was du ausprobieren kannst</h2>
+    <p>Alle Zahlen, Fahrzeuge, Personen, Banken und Hersteller sind erfunden („Hersteller1“, „Nordbank“ …). Es läuft
+      aber das echte Programm – nicht nur Bilder.</p>
+    <div class="raster">
+      <div class="kachel"><b>Übersicht & Heute</b><span>Kennzahlen, Warnungen, Termine der Woche – frei anordnen wie am Handy.</span></div>
+      <div class="kachel"><b>Bestand</b><span>Fahrzeuge aus der Bestandsliste mit Standtagen, Preisen und Ausstattung.</span></div>
+      <div class="kachel"><b>Finanzierung</b><span>Je Bank und Hersteller: Limit, genutzt, was kommt – und wann eine Linie eng wird.</span></div>
+      <div class="kachel"><b>Zinsuhr & Liquidität</b><span>Wann die Zinsfreiheit endet, was das kostet und wie das Konto verläuft.</span></div>
+      <div class="kachel"><b>Auslieferungen</b><span>Termine, Papiere, Zahlungen – und welche Gelder noch erwartet werden.</span></div>
+      <div class="kachel"><b>Teile & Montage</b><span>Preise inkl. Einbau, Stücklisten, Montagezeiten.</span></div>
+      <div class="kachel"><b>In ODIN arbeiten</b><span>Einen Satz schreiben („Übergabe Vogel auf Freitag verschieben“) – ODIN zeigt die Änderung vorher und kann sie zurücknehmen.</span></div>
+      <div class="kachel"><b>Fragen</b><span>Der Assistent beantwortet Fragen zum Betrieb aus den eigenen Daten.</span></div>
+      <div class="kachel"><b>Urlaub</b><span>Anträge, Genehmigung, Konflikte mit Kollegen und Messen.</span></div>
+      <div class="kachel"><b>Projekte & Besprechungen</b><span>Boards, Aufgaben, Beschlüsse mit Begründung, Quartalsziele.</span></div>
+      <div class="kachel"><b>Messe-Personal</b><span>Wer steht wann am Stand – mit Export.</span></div>
+      <div class="kachel"><b>Wissen, Beirat & Tagesfrage</b><span>Anleitungen, Coaching-Impulse und eine Frage am Tag fürs Team.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Wo das hingeht</h2>
+    <p>Was du siehst, ist das Grundgerüst. ODIN liest heute noch die bestehenden Listen und Ordner, damit niemand
+      umlernen muss. Schritt für Schritt soll es die Insellösungen ablösen und zur einen Stelle werden, an der der
+      Betrieb läuft.</p>
+    <div class="zeitstrahl">
+      <div class="kachel"><small>Heute</small><b>Zusammenführen</b><span>Excel-Listen, Ordner und Mails live lesen, auswerten und warnen – ohne etwas umzustellen.</span></div>
+      <div class="kachel"><small>Als Nächstes</small><b>Mitarbeiten</b><span>Änderungen per Satz oder Sprache, Kalender, Rechte je Rolle, Anmeldung mit Firmenkonto.</span></div>
+      <div class="kachel"><small>Ziel</small><b>Ablösen</b><span>Eine gemeinsame Datenbasis statt Listen – ODIN wird das System, in dem gearbeitet wird.</span></div>
+    </div>
+  </section>
+
+  <footer>
+    ODIN-Demo · alle Daten erfunden · nichts wird gespeichert oder verschickt – die Demo läuft nur in deinem Browser
+    (Python per WebAssembly). Feedback gerne direkt an den, der dir den Link geschickt hat.
+  </footer>
+</div>
+</body>
+</html>

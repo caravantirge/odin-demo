@@ -1,0 +1,199 @@
+/* ODIN · Wissen & Einarbeitung (innerhalb von #inhalt.cp unter .ws; Dialoge außerhalb als .ws-dialog).
+   Bausteine aus cockpit.css/projekte.css (kopf, karte, pille, filter, pj-chip, pj-avatar, pj-segment, pj-haken).
+   Keine Silbentrennung, nichts läuft waagrecht über: lange Wörter brechen um (overflow-wrap), Reihen umbrechen. */
+
+.cp .ws { min-width: 0; overflow-wrap: anywhere; hyphens: manual; }
+.cp .ws .btn .ic { width: 15px; height: 15px; margin-right: 6px; flex: none; }
+.cp .ws .btn { display: inline-flex; align-items: center; }
+.cp .ws .btn.ws-gefahr { color: var(--kritisch); }
+.cp .ws h2 { font-size: 15px; }
+.cp .ws-kopf { align-items: flex-start; }
+.cp .ws-kopf > div:first-child { display: grid; gap: 8px; min-width: 0; flex: 1 1 320px; }
+.cp .ws-kopf .pj-krumen { margin: 0 !important; }
+.cp .ws-kopf p.ws-zweck, .cp .ws-zweck { margin: 0; color: var(--ink-2); font-size: 13.5px; max-width: 80ch; }
+.cp .ws-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.cp .ws-meta a.klein { color: var(--ink-2); }
+
+/* ---------- Reiter und Hinweis ---------- */
+.cp .ws-leiste { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin: -6px 0 18px; }
+.cp .ws-reiter { flex-wrap: wrap; max-width: 100%; }
+.cp .ws-geheim { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-3); }
+.cp .ws-geheim .ic { width: 13px; height: 13px; flex: none; }
+.cp .ws-entwurf { margin-bottom: 14px; }
+.cp .ws-werkzeuge { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 22px 0 12px; }
+.cp .ws-leiste + .ws-werkzeuge { margin-top: 0; }
+.cp .ws-werkzeuge .filter { margin: 0; }
+.cp .ws-werkzeuge h2 { margin-right: auto; }
+.cp .ws-suche input[type="search"] { width: 240px; max-width: 52vw; }
+.cp .ws-leer { margin: 0; padding: 14px 16px; color: var(--ink-3); font-size: 13px; }
+.cp .ws-mehr { padding: 8px 16px 12px; }
+.cp .ws-stapel { display: grid; gap: 16px; margin-top: 16px; }
+
+/* ---------- Karten (Vorlagen, Personen) ---------- */
+.cp .ws-karten { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(330px, 100%), 1fr)); gap: 14px; }
+.cp .ws-karte { display: grid; gap: 10px; align-content: start; padding: 14px 16px; min-width: 0; box-shadow: var(--shadow-border, none); color: var(--ink); text-decoration: none; }
+.cp .ws-karte-titel { color: var(--ink); font-size: 15px; font-weight: 600; text-decoration: none; }
+@media (hover: hover) and (pointer: fine) {
+  .cp .ws-karte-titel:hover { text-decoration: underline; text-decoration-color: var(--linie-stark); }
+  .cp a.ws-karte:hover { border-color: var(--linie-stark); }
+  .cp .ws-zeile:hover { background: var(--flaeche-2); }
+}
+.cp .ws-karte .ws-zweck { font-size: 13px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.cp .ws-karte-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.cp .ws-karte-fuss { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding-top: 10px; border-top: 1px solid var(--linie); }
+.cp .ws-kenner, .cp .ws-person { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12.5px; }
+.cp .ws-person-kopf { display: flex; align-items: center; gap: 10px; }
+.cp .ws-person-kopf > span:last-child { display: grid; min-width: 0; }
+.cp .ws-fortschritt { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.cp .ws-fortschritt b { font-size: 18px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.cp .ws-balken { display: block; flex: 1 1 90px; min-width: 60px; max-width: 320px; height: 6px; }
+
+/* ---------- Listen ---------- */
+.cp .ws-liste ul { list-style: none; margin: 0; padding: 6px 8px 8px; }
+.cp .ws-zeile { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 9px 8px; border-radius: 8px; color: var(--ink); text-decoration: none; transition: background-color 120ms ease; }
+.cp .ws-zeile-haupt { display: grid; gap: 4px; flex: 1 1 240px; min-width: 0; }
+.cp .ws-zeile-titel { font-weight: 550; }
+.cp .ws-zeile-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: 12px; }
+.cp .ws-zeile-rechts { display: flex; align-items: center; gap: 10px; flex: 0 1 auto; min-width: 0; }
+.cp .ws-zeile-rechts .ws-balken { flex: none; width: 90px; }
+.cp .ws-zahl { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cp .ws-ausschnitt { font-size: 12.5px; color: var(--ink-2); }
+
+/* ---------- Ablauf und Durchlauf ---------- */
+.cp .ws-raster { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 16px; align-items: start; }
+@media (max-width: 1100px) { .cp .ws-raster { grid-template-columns: minmax(0, 1fr); } }
+.cp .ws-schritte { margin: 0; padding: 8px 16px 14px 40px; display: grid; gap: 10px; }
+.cp .ws-schritte li::marker { color: var(--ink-3); font-variant-numeric: tabular-nums; font-weight: 600; }
+.cp .ws-hinweis { margin: 3px 0 0; font-size: 12.5px; color: var(--ink-2); }
+.cp .ws-hinweis span { color: var(--ink-3); }
+.cp .ws-abhaken { list-style: none; margin: 0; padding: 6px 12px 10px; }
+.cp .ws-abhaken li { display: flex; align-items: flex-start; gap: 8px; padding: 10px 0; border-top: 1px solid var(--linie); }
+.cp .ws-abhaken li:first-child { border-top: 0; }
+.cp .ws-abhaken .pj-haken { flex: none; margin-top: -3px; }
+.cp .ws-abhaken-haupt { display: grid; gap: 5px; flex: 1; min-width: 0; }
+.cp .ws-abhaken li.fertig b { color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--linie-stark); }
+.cp .ws textarea {
+  width: 100%; resize: vertical; min-height: 34px; padding: 6px 9px; border: 1px solid transparent; border-radius: 8px;
+  background: var(--flaeche-2); color: var(--ink); font: inherit; font-size: 12.5px; line-height: 1.5;
+}
+.cp .ws textarea:focus { outline: 2px solid var(--akzent); outline-offset: 0; background: var(--flaeche); }
+
+/* ---------- Anleitung ---------- */
+.cp .ws-artikel { padding: 18px 22px 20px; max-width: 860px; font-size: 14.5px; line-height: 1.6; }
+.cp .ws-artikel h3 { margin: 18px 0 6px; font-size: 16px; font-weight: 650; }
+.cp .ws-artikel > h3:first-child { margin-top: 0; }
+.cp .ws-artikel p { margin: 0 0 10px; }
+.cp .ws-artikel ul, .cp .ws-artikel ol { margin: 0 0 10px; padding-left: 24px; display: grid; gap: 4px; }
+.cp .ws-bild { margin: 6px 0 16px; }
+.cp .ws-bild img { display: block; max-width: 100%; height: auto; border: 1px solid var(--linie-stark); border-radius: 6px; background: #fff; }
+.cp .ws-bild figcaption { margin-top: 6px; color: var(--ink-3); font-size: 12.5px; line-height: 1.45; }
+.cp .ws-aufzeichnung { display: flex; align-items: center; gap: 8px; margin: 16px 0 0; padding-top: 12px; border-top: 1px solid var(--linie); }
+.cp .ws-aufzeichnung .ic { width: 16px; height: 16px; color: var(--ink-3); }
+.cp .ws-aufzeichnung a { color: var(--ink); }
+
+/* ---------- Einarbeitung ---------- */
+.cp .ws-phase { margin-top: 14px; }
+.cp .ws-phase ul { list-style: none; margin: 0; padding: 4px 16px 10px; }
+.cp .ws-schritt { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 8px 16px; padding: 10px 0; border-top: 1px solid var(--linie); }
+.cp .ws-schritt:first-child { border-top: 0; }
+.cp .ws-schritt-haupt { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; flex: 1 1 260px; min-width: 0; }
+.cp .ws-schritt-haupt > b { font-weight: 550; flex: 1 1 100%; }
+.cp .ws-schritt.fertig .ws-schritt-haupt > b { color: var(--ink-3); }
+.cp a.ws-verweis { text-decoration: none; }
+.cp .ws-leitfragen { flex: 1 1 100%; margin: 0; padding-left: 20px; font-size: 13px; color: var(--ink-2); display: grid; gap: 2px; }
+.cp .ws-gespraech textarea { flex: 1 1 100%; }
+.cp .ws-haken { display: flex; flex-wrap: wrap; gap: 6px; }
+.cp .ws-schalter {
+  display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 10px; border: 1px dashed var(--linie-stark);
+  border-radius: 999px; background: none; color: var(--ink-2); font: inherit; font-size: 12px; font-weight: 550; cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+.cp .ws-schalter .ic { width: 13px; height: 13px; opacity: .35; }
+.cp .ws-schalter.an { border: 1px solid transparent; background: var(--flaeche-3); color: var(--ink); }
+.cp .ws-schalter.an .ic { opacity: 1; }
+.cp .ws-schalter.selbst.an, .cp .ws-gespraech .ws-schalter.an { background: var(--gut-weich); color: var(--gut); }
+.cp .ws-schalter:disabled { cursor: default; opacity: .6; }
+@media (hover: hover) and (pointer: fine) { .cp .ws-schalter:not(.an):not(:disabled):hover { border-color: var(--ink-3); color: var(--ink); } }
+
+/* ---------- Wer weiß was ---------- */
+.cp .ws-zahlen { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 12px; margin-bottom: 14px; }
+.cp .ws-zahl-kachel { display: grid; gap: 2px; padding: 12px 16px; border-radius: var(--r-gross); background: var(--flaeche); border: 1px solid var(--linie); box-shadow: var(--shadow-border, none); }
+.cp .ws-zahl-kachel b { font-size: 26px; font-weight: 650; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.cp .ws-zahl-kachel span { font-size: 12.5px; color: var(--ink-2); }
+.cp .ws-zahl-kachel.krit b { color: var(--kritisch); }
+.cp .ws-zahl-kachel.gut b { color: var(--gut); }
+.cp .ws-tabelle table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.cp .ws-tabelle th { text-align: left; padding: 8px 16px; font-size: 11.5px; font-weight: 600; color: var(--ink-3); border-bottom: 1px solid var(--linie); }
+.cp .ws-tabelle td { padding: 9px 16px; border-top: 1px solid var(--linie); vertical-align: top; }
+.cp .ws-tabelle tbody tr:first-child td { border-top: 0; }
+.cp .ws-tabelle td > .klein { display: block; margin-top: 2px; }
+.cp .ws-tabelle td a { color: var(--ink); font-weight: 600; text-decoration: none; }
+.cp .ws-tabelle tr.risiko td:first-child { box-shadow: inset 3px 0 0 var(--kritisch); }
+.cp .ws-tabelle .ws-person { margin-right: 8px; }
+
+/* ---------- Hausregeln ---------- */
+.cp .ws-regel-hinweis { align-items: flex-start; }
+.cp .ws-regel-hinweis > .ic { width: 18px; height: 18px; flex: none; margin-top: 1px; }
+.cp .ws-regel { display: grid; gap: 10px; padding: 16px 18px; max-width: 860px; box-shadow: inset 3px 0 0 var(--ink), var(--shadow-border, 0 0 0 0 transparent); }
+.cp .ws-regel-kopf { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.cp .ws-regel-kopf h2 { margin: 0; font-size: 16px; }
+.cp .ws-regel-text { margin: 0; font-size: 15px; font-weight: 550; line-height: 1.5; }
+.cp .ws-regel-ausnahme { margin: 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
+.cp .ws-regel-kunde { display: grid; gap: 8px; padding-top: 10px; border-top: 1px solid var(--linie); }
+.cp .ws-zitat { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 8px; background: var(--flaeche-2); }
+.cp .ws-zitat p { margin: 0; flex: 1; min-width: 0; font-size: 13.5px; line-height: 1.5; }
+.cp .ws-zitat .mini { flex: none; }
+
+/* ---------- Offene Fragen ---------- */
+.cp .ws-frage { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 10px 8px; border-top: 1px solid var(--linie); }
+.cp .ws-liste li.ws-frage:first-child { border-top: 0; }
+.cp .ws-frage-haupt { display: grid; gap: 4px; flex: 1 1 280px; min-width: 0; }
+.cp .ws-frage-haupt b { font-weight: 550; }
+.cp .ws-frage-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+.cp .ws-frage-knoepfe { display: flex; flex-wrap: wrap; gap: 8px; }
+.cp .ws-fuss { margin: 10px 2px 0; color: var(--ink-3); }
+
+/* ---------- Schmal (Handybreite): Tabelle als Blöcke, nichts läuft über ---------- */
+@media (max-width: 640px) {
+  .cp .ws-tabelle thead { display: none; }
+  .cp .ws-tabelle tr { display: grid; gap: 4px; padding: 10px 14px; border-top: 1px solid var(--linie); }
+  .cp .ws-tabelle tbody tr:first-child { border-top: 0; }
+  .cp .ws-tabelle td { padding: 0; border: 0; }
+  .cp .ws-tabelle tr.risiko td:first-child { box-shadow: none; }
+  .cp .ws-tabelle tr.risiko { box-shadow: inset 3px 0 0 var(--kritisch); }
+  .cp .ws-artikel { padding: 14px 16px; }
+  .cp .ws-schritte { padding-left: 34px; }
+  .cp .ws .kopf-aktionen { gap: 8px; }
+  .cp .ws-suche { flex: 1 1 100%; }
+  .cp .ws-suche input[type="search"] { width: 100%; max-width: none; }
+}
+
+/* ---------- Dialoge (außerhalb von .cp) ---------- */
+.ws-dialog { max-height: calc(100vh - 32px); overflow-y: auto; overscroll-behavior: contain; overflow-wrap: anywhere; }
+.ws-dialog.ws-breit { width: min(820px, calc(100vw - 32px)); }
+.ws-dialog .feld select, .ws-dialog .feld input { width: 100%; min-width: 0; }
+.ws-dialog .feld-fehler[hidden] { display: none; }
+.ws-dialog .ws-geheim-hilfe { margin: 0; }
+.ws-dialog .ws-ed { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; counter-reset: schritt; }
+.ws-dialog .ws-ed-zeile { display: flex; align-items: flex-start; gap: 8px; padding: 8px; border-radius: var(--radius-md); background: var(--surface-200); counter-increment: schritt; }
+.ws-dialog .ws-ed-zeile::before { content: counter(schritt); flex: none; width: 20px; padding-top: 9px; text-align: right; font-size: 12px; font-weight: 600; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+.ws-dialog .ws-ed-felder { display: grid; gap: 6px; flex: 1; min-width: 0; }
+.ws-dialog .ws-ed-felder input:not([type="checkbox"]), .ws-dialog .ws-ed-felder select { height: 36px; }
+.ws-dialog .ws-ed-reihe { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 6px; }
+.ws-dialog .ws-ed-pflicht { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink-muted); cursor: pointer; }
+.ws-dialog .ws-ed-pflicht input { width: 15px; height: 15px; padding: 0; accent-color: var(--ink); }
+.ws-dialog .ws-ed-knoepfe { display: flex; gap: 2px; flex: none; }
+.ws-dialog .ws-ed-knoepfe .knopf { min-width: 30px; height: 30px; padding: 0 6px; }
+.ws-dialog [data-ed="neu"] { justify-self: start; }
+@media (max-width: 560px) {
+  .ws-dialog .feld-reihe, .ws-dialog .ws-ed-reihe { grid-template-columns: minmax(0, 1fr); }
+  .ws-dialog .ws-ed-zeile { flex-wrap: wrap; }
+  .ws-dialog .ws-ed-zeile::before { display: none; }
+  .ws-dialog .ws-ed-felder { flex: 1 1 100%; }
+}
+
+/* ---------- Heute & Woche: Punkte aus dem Wissen ---------- */
+.cp .ag-art.art-einarbeitung { background: #7A4FB5; border-radius: 50%; }
+.cp .ag-art.art-ablauf { background: #2F6DB3; border-radius: 50%; }
+
+@media (prefers-reduced-motion: reduce) { .cp .ws-schalter, .cp .ws-zeile { transition: none; } }

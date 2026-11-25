@@ -1,0 +1,245 @@
+/* ODIN · Führung – Besprechungen, Beschluss-Log, Quartalsziele (innerhalb von #inhalt.cp; Dialoge außerhalb).
+   Bausteine aus cockpit.css/projekte.css (kopf, karte, kacheln, pj-chip, pj-avatar, pj-segment). Tiefe über
+   var(--shadow-border) (ODIN 3) mit Rahmen als Rückfall (ODIN 2). Bewegung nur als Rückmeldung: Farbwechsel unter
+   150 ms, Druckgefühl kommt aus v3.css (scale .97); Hover nur bei echter Maus. */
+
+/* ---------- Allgemein ---------- */
+.cp a.btn { display: inline-flex; align-items: center; text-decoration: none; }
+.cp .btn .ic { width: 15px; height: 15px; margin-right: 6px; flex: none; }
+.cp .bs-knoepfe { display: flex; flex-wrap: wrap; gap: 8px; }
+.cp .bs-leer { margin: 0; padding: 6px 2px; color: var(--ink-3); font-size: 12.5px; }
+.cp .bs-art {
+  --art: var(--ink-3); border-color: transparent;
+  background: color-mix(in srgb, var(--art) 13%, transparent); color: color-mix(in srgb, var(--art) 75%, var(--ink));
+}
+.cp .bs-art.art-wochenrunde { --art: #2F6DB3; }
+.cp .bs-art.art-gespraech { --art: #7A4FB5; }
+.cp .bs-art.art-kunde { --art: #0F8F78; }
+.cp .bs-art.art-lieferant { --art: #B4532A; }
+.cp .bs-art.art-bank { --art: #8A6D00; }
+.cp .bs-schloss { display: inline-flex; align-items: center; gap: 4px; color: var(--ink-2); font-size: 11.5px; }
+.cp .bs-schloss .ic { width: 13px; height: 13px; }
+.cp .bs-regel { align-items: center; }
+.cp .bs-regel .mini { margin-left: 6px; }
+.cp .bs-werkzeuge { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0 0 14px; }
+.cp .bs-werkzeuge .filter { margin: 0; }
+.cp .bs-zahl { margin-left: 2px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.cp .filter .aktiv .bs-zahl { color: inherit; opacity: .7; }
+.cp .bs-suche-breit input[type="search"] { width: 300px; }
+.cp .bs-kacheln { margin-bottom: 18px; }
+
+/* ---------- Liste ---------- */
+.cp .bs-liste ul { list-style: none; margin: 0; padding: 4px 8px 8px; }
+.cp .bs-monat { padding: 12px 8px 4px; font-size: 11.5px; font-weight: 600; color: var(--ink-3); }
+.cp .bs-zeile {
+  display: flex; align-items: center; gap: 14px; padding: 8px; border-radius: 8px;
+  color: var(--ink); text-decoration: none; transition: background-color 120ms ease;
+}
+@media (hover: hover) and (pointer: fine) { .cp .bs-zeile:hover { background: var(--flaeche-2); } }
+.cp .bs-tag {
+  display: grid; justify-items: center; flex: none; width: 40px; padding: 3px 0; border-radius: 8px;
+  background: var(--flaeche-2); line-height: 1.1;
+}
+.cp .bs-tag b { font-size: 15px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.cp .bs-tag span { font-size: 10.5px; color: var(--ink-3); }
+.cp .bs-zeile-haupt { display: grid; gap: 3px; flex: 1; min-width: 0; }
+.cp .bs-zeile-titel { font-weight: 550; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cp .bs-zeile-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: 12px; }
+.cp .bs-zeile-rechts { display: flex; align-items: center; gap: 10px; flex: none; }
+
+/* ---------- Eine Besprechung ---------- */
+.cp .bs-kopf { align-items: flex-start; margin-bottom: 14px; }
+.cp .bs-kopf-links { display: grid; gap: 6px; min-width: 0; flex: 1; }
+.cp .bs-kopf .pj-krumen { margin: 0 !important; }
+.cp input.bs-titel {
+  width: 100%; max-width: 760px; margin: 0 0 0 -7px; padding: 2px 6px; border: 1px solid transparent; border-radius: 8px;
+  background: none; color: var(--ink); font: 650 22px/1.25 var(--schrift); letter-spacing: -.02em;
+  transition: border-color 150ms ease;
+}
+@media (hover: hover) and (pointer: fine) { .cp input.bs-titel:hover { border-color: var(--linie); } }
+.cp input.bs-titel:focus { outline: 2px solid var(--akzent); outline-offset: 0; }
+.cp .bs-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.cp .bs-meta select, .cp .bs-meta input[type="date"] { padding: 5px 8px; font-size: 12.5px; }
+.cp .bs-schalter { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 12.5px; color: var(--ink-2); }
+.cp .bs-schalter input { width: 15px; height: 15px; accent-color: var(--ink); }
+.cp .bs-schalter span { display: inline-flex; align-items: center; gap: 4px; }
+.cp .bs-schalter .ic { width: 13px; height: 13px; }
+.cp .bs-speicher { color: var(--ink-3); min-width: 9ch; }
+.cp .bs-teilnehmer { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 12px; }
+.cp .bs-teilnehmer > .klein { margin-right: 4px; }
+.cp .bs-regel-text { display: flex; align-items: center; gap: 6px; margin: 0 0 16px; }
+.cp .bs-regel-text .ic { width: 14px; height: 14px; }
+
+.cp .bs-raster { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 380px); gap: 18px; align-items: start; }
+.cp .bs-haupt { display: grid; gap: 12px; min-width: 0; }
+.cp .bs-seite-rechts {
+  position: sticky; top: 0; display: grid; gap: 12px; max-height: calc(100vh - 56px);
+  overflow-y: auto; overscroll-behavior: contain; padding: 1px; margin: -1px;   /* Schattenring nicht abschneiden */
+}
+@media (max-width: 1180px) {
+  .cp .bs-raster { grid-template-columns: minmax(0, 1fr); }
+  .cp .bs-seite-rechts { position: static; max-height: none; overflow: visible; }
+}
+
+.cp .bs-abschnitt { display: grid; gap: 8px; padding: 12px 16px 14px; overflow: visible; }
+.cp .bs-abschnitt-kopf { display: flex; align-items: center; gap: 8px; }
+.cp .bs-abschnitt-kopf h2 { font-size: 14.5px; }
+.cp .bs-abschnitt-kopf .pj-icon-knopf { margin-left: auto; }
+.cp .bs-abschnitt-kopf .pj-chip { margin-left: 2px; }
+.cp .bs-nr {
+  display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; flex: none;
+  background: var(--flaeche-3); font-size: 11.5px; font-weight: 600; font-variant-numeric: tabular-nums;
+}
+.cp .bs-hilfe { margin: -2px 0 0; font-size: 12.5px; color: var(--ink-2); }
+.cp .bs-notiz, .cp .bs-thema-notiz, .cp .bs-feld textarea, .cp .bs-formular textarea {
+  width: 100%; resize: vertical; padding: 8px 10px; border: 1px solid var(--linie-stark); border-radius: 8px;
+  background: var(--flaeche); color: var(--ink); font: inherit; font-size: 13px; line-height: 1.5; min-height: 40px;
+}
+.cp .bs-notiz { border-color: transparent; background: var(--flaeche-2); min-height: 52px; transition: border-color 150ms ease, background-color 150ms ease; }
+@media (hover: hover) and (pointer: fine) { .cp .bs-notiz:hover { border-color: var(--linie); } }
+.cp .bs-notiz:focus, .cp .bs-thema-notiz:focus, .cp .bs-feld textarea:focus, .cp .bs-formular textarea:focus {
+  outline: 2px solid var(--akzent); outline-offset: 0; border-color: transparent; background: var(--flaeche);
+}
+.cp .bs-abschnitt-neu { justify-self: start; flex: none; }
+.cp .bs-eingebettet { display: grid; gap: 8px; justify-items: start; }
+.cp .bs-eingebettet > ul { justify-self: stretch; }
+.cp .bs-feld { display: grid; gap: 5px; }
+.cp .bs-feld > span { font-size: 12px; font-weight: 550; color: var(--ink-2); }
+
+/* Themen */
+.cp .bs-themen { display: grid; gap: 8px; }
+.cp .bs-thema-neu input { max-width: none; }
+.cp .bs-top-zahl { margin: 0; }
+.cp .bs-themen-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.cp .bs-thema { display: grid; gap: 6px; padding: 8px 10px; border-radius: 10px; background: var(--flaeche); box-shadow: inset 0 0 0 1px var(--linie); }
+.cp .bs-thema.top { box-shadow: inset 3px 0 0 var(--akzent), inset 0 0 0 1px var(--linie); }
+.cp .bs-thema.fertig { background: none; }
+.cp .bs-thema.fertig .bs-thema-titel { color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--linie-stark); }
+.cp .bs-thema-zeile { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.cp .bs-thema-titel { flex: 1 1 200px; min-width: 0; font-weight: 550; overflow-wrap: break-word; }
+.cp .bs-top {
+  height: 24px; padding: 0 8px; border: 1px dashed var(--linie-stark); border-radius: 999px; background: none;
+  color: var(--ink-3); font: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+.cp .bs-top.an { border: 1px solid transparent; background: var(--akzent); color: var(--auf-akzent); }
+@media (hover: hover) and (pointer: fine) { .cp .bs-top:not(.an):hover { border-color: var(--ink-3); color: var(--ink); } }
+.cp .bs-thema-notiz { min-height: 34px; padding: 6px 9px; font-size: 12.5px; }
+.cp .bs-loesen { padding: 10px; border-radius: 8px; background: var(--flaeche-2); }
+.cp .bs-geloest-knopf { justify-self: start; }
+
+/* Formulare in Karten */
+.cp .bs-formular { display: grid; gap: 8px; }
+.cp .bs-formular input[type="text"] { max-width: none; }
+.cp .bs-formular-reihe { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.cp .bs-formular-reihe select { flex: 1 1 140px; min-width: 0; }
+.cp .bs-formular-fuss { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; }
+.cp .bs-formular-fuss > .klein { flex: 1 1 180px; margin-right: auto; }
+.cp .bs-feld-klein { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); }
+.cp .bs-feld-klein input[type="date"] { padding: 6px 8px; font-size: 12.5px; }
+.cp .bs-feld-klein.faellig { color: var(--warnung); font-weight: 600; }
+.cp .bs-formular-fuss .bs-feld-klein { margin-right: auto; }
+
+/* Seitenkarten: Aufgaben, Beschlüsse */
+.cp .bs-seitenkarte .karte-kopf h2 { display: flex; align-items: center; gap: 6px; }
+.cp .bs-seitenkarte .karte-kopf p a { border: 0; text-decoration: underline; text-decoration-color: var(--linie-stark); text-underline-offset: 2px; font-size: inherit; }
+.cp .bs-karten-inhalt { display: grid; gap: 12px; padding: 12px 14px 14px; }
+.cp .bs-beschluesse, .cp .bs-aufgaben { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.cp .bs-beschluesse li { display: grid; gap: 4px; padding: 9px 0; border-top: 1px solid var(--linie); }
+.cp .bs-beschluesse li:first-child { border-top: 0; }
+.cp .bs-beschluss-text { font-weight: 550; white-space: pre-wrap; overflow-wrap: break-word; }
+.cp .bs-beschluss-grund { font-size: 12.5px; color: var(--ink-2); white-space: pre-wrap; overflow-wrap: break-word; }
+.cp .bs-beschluss-grund span { color: var(--ink-3); }
+.cp .bs-beschluss-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 12px; }
+.cp .bs-beschluss-meta .pj-icon-knopf { margin-left: auto; }
+.cp .bs-beschluss-meta a { color: var(--ink-2); }
+.cp .status-beendet .bs-beschluss-text, .cp .status-geändert .bs-beschluss-text { color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--linie-stark); }
+.cp select.bs-status-wahl { padding: 3px 6px; font-size: 12px; }
+.cp .bs-aufgabe { display: flex; align-items: flex-start; gap: 6px; padding: 6px 0; border-top: 1px solid var(--linie); }
+.cp .bs-aufgabe:first-child { border-top: 0; }
+.cp .bs-aufgabe .pj-haken { flex: none; margin-top: -2px; }
+.cp .bs-aufgabe-haupt { display: grid; gap: 4px; flex: 1; min-width: 0; }
+.cp .bs-aufgabe-titel { font-weight: 500; overflow-wrap: break-word; }
+.cp .bs-aufgabe.fertig .bs-aufgabe-titel, .cp .bs-aufgabe.weg .bs-aufgabe-titel { color: var(--ink-3); text-decoration: line-through; text-decoration-color: var(--linie-stark); }
+.cp .bs-aufgabe-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; font-size: 12px; }
+.cp .bs-aufgabe-meta a.pj-chip { text-decoration: none; }
+.cp .bs-aufgabe-hinweis { font-size: 12px; color: var(--warnung); }
+.cp .bs-weg-marke { display: inline-grid; place-items: center; width: 28px; height: 26px; color: var(--ink-3); flex: none; }
+.cp .bs-quote { margin: 0; font-size: 13px; }
+.cp .bs-quote a { color: inherit; }
+
+/* Bewertung */
+.cp .bs-bewertung { display: grid; gap: 10px; }
+.cp .bs-noten { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.cp .bs-noten li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.cp .bs-noten-wer { display: inline-flex; align-items: center; gap: 8px; min-width: 150px; font-size: 13px; }
+.cp .bs-skala { display: inline-flex; gap: 3px; }
+.cp .bs-skala button {
+  width: 27px; height: 27px; padding: 0; border: 0; border-radius: 7px; background: var(--flaeche-2);
+  color: var(--ink-2); font: inherit; font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease, transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+@media (hover: hover) and (pointer: fine) { .cp .bs-skala button:hover { background: var(--flaeche-3); color: var(--ink); } }
+.cp .bs-skala button[aria-pressed="true"] { background: var(--gut); color: #FFFFFF; }
+.cp .bs-skala button.unter[aria-pressed="true"] { background: var(--warnung); }
+.cp .bs-schnitt { display: flex; align-items: baseline; gap: 10px; padding-top: 8px; border-top: 1px solid var(--linie); font-size: 13px; }
+.cp .bs-schnitt b { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.cp .bs-schnitt b.gut { color: var(--gut); }
+.cp .bs-schnitt b.warn { color: var(--warnung); }
+
+/* Quartalsziele in der Wochenrunde */
+.cp .bs-ziele-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; width: 100%; }
+.cp .bs-ziel-zeile { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 6px 8px; border-radius: 8px; background: var(--flaeche-2); }
+.cp .bs-ziel-text { display: grid; flex: 1 1 200px; min-width: 0; }
+.cp .bs-ziel-text a { color: var(--ink); font-weight: 550; text-decoration: none; }
+@media (hover: hover) and (pointer: fine) { .cp .bs-ziel-text a:hover { text-decoration: underline; text-decoration-color: var(--linie-stark); } }
+.cp .bs-status > button { height: 26px; font-size: 12px; }
+.cp .bs-status > button[aria-pressed="true"].gut { background: var(--gut-weich); color: var(--gut); box-shadow: none; }
+.cp .bs-status > button[aria-pressed="true"].krit { background: var(--kritisch-weich); color: var(--kritisch); box-shadow: none; }
+
+/* ---------- Beschluss-Log ---------- */
+.cp .bs-log-zeile { display: flex; align-items: flex-start; gap: 14px; padding: 10px 8px; border-top: 1px solid var(--linie); }
+.cp .bs-liste li.bs-log-zeile:first-child { border-top: 0; }
+.cp .bs-log-zeile.faellig { margin: 0 -8px; padding-inline: 16px; background: var(--warnung-weich); border-radius: 8px; border-top-color: transparent; }
+.cp .bs-log-haupt { display: grid; gap: 4px; flex: 1; min-width: 0; }
+.cp .bs-log-rechts { display: grid; gap: 6px; justify-items: end; flex: none; }
+.cp .bs-log-rechts .bs-feld-klein { flex-direction: column; align-items: flex-end; gap: 2px; }
+
+/* ---------- Quartalsziele ---------- */
+.cp .bs-quartal { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.cp .bs-quartal .klein { font-weight: 400; }
+.cp .bs-ziele { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 14px; }
+.cp .bs-ziel {
+  position: relative; display: grid; gap: 10px; align-content: start; padding: 14px 16px; min-width: 0; overflow: hidden;
+  background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--r-gross); box-shadow: var(--shadow-border, none);
+}
+.cp .bs-ziel::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--linie-stark); }
+.cp .bs-ziel.ton-gut::before { background: var(--gut); }
+.cp .bs-ziel.ton-krit::before { background: var(--kritisch); }
+.cp .bs-ziel.ton-offen::before { background: var(--warnung); }
+.cp .bs-ziel-kopf { display: flex; align-items: center; gap: 8px; }
+.cp .bs-ziel-kopf a { display: inline-flex; align-items: center; gap: 8px; flex: 1; min-width: 0; color: var(--ink); font-size: 15px; font-weight: 600; text-decoration: none; }
+@media (hover: hover) and (pointer: fine) { .cp .bs-ziel-kopf a:hover { text-decoration: underline; text-decoration-color: var(--linie-stark); } }
+.cp .bs-ziel-wer { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.cp .bs-ziel-hinweis { margin: 0; font-size: 12.5px; color: var(--warnung); font-weight: 550; }
+.cp .bs-ziel-fuss { margin: 0; }
+
+/* ---------- Dialoge (außerhalb von .cp) ---------- */
+.bs-dialog .bs-schalter-zeile { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; cursor: pointer; }
+.bs-dialog .bs-schalter-zeile input { margin-top: 3px; width: 15px; height: 15px; accent-color: var(--ink); }
+.bs-dialog .bs-vorschau-zahlen { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.bs-dialog .bs-vorschau-zahl { display: grid; gap: 2px; padding: 10px 12px; border-radius: var(--radius-md); background: var(--surface-200); }
+.bs-dialog .bs-vorschau-zahl b { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.bs-dialog .bs-vorschau-zahl .klein { color: var(--ink-muted); font-size: 12px; }
+.bs-dialog .bs-vorschau-leute { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.bs-dialog .bs-vorschau-leute .pj-person-chip { cursor: default; }
+.bs-dialog .bs-vorschau-leute .leise { color: var(--ink-muted); }
+.bs-dialog .bs-hinweise {
+  margin: 0; padding: 10px 12px 10px 28px; border-radius: var(--radius-md); background: var(--warning-flaeche);
+  color: var(--ink); font-size: 12.5px; display: grid; gap: 4px; max-height: 160px; overflow-y: auto; overscroll-behavior: contain;
+}
+.bs-dialog .feld select { width: 100%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cp .bs-skala button { transition: none; }
+}

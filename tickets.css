@@ -1,0 +1,127 @@
+/* ODIN · Tickets (innerhalb von #inhalt.cp unter .tk).
+   Bausteine aus cockpit.css/projekte.css (kopf, karte, filter, feld, btn, pj-chip, pj-krumen); ODIN 3 legt über
+   v3.css Schattenringe darüber. Keine Silbentrennung, nichts läuft waagrecht über: lange Wörter brechen um, Raster
+   werden auf schmalen Fenstern einspaltig, Protokollzeilen umbrechen statt zu scrollen. */
+
+.cp .tk { min-width: 0; overflow-wrap: anywhere; hyphens: manual; }
+.cp .tk h3 { margin: 0 0 4px; font-size: 11.5px; font-weight: 600; color: var(--ink-3); letter-spacing: .04em; text-transform: uppercase; }
+.cp .tk .kopf h1 { max-width: 40ch; }
+.cp .tk .pj-chip.info { background: var(--akzent-weich, var(--flaeche-2)); color: var(--ink); }
+.cp .tk-text { margin: 0; white-space: pre-wrap; font-size: 13.5px; line-height: 1.55; color: var(--ink); }
+
+/* ---------- Übersicht ---------- */
+.cp .tk-werkzeuge { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin: -6px 0 14px; }
+.cp .tk-werkzeuge .filter { margin: 0; }
+.cp .tk-anzahl { margin-left: 2px; font-variant-numeric: tabular-nums; opacity: .7; }
+.cp .tk-filter-rechts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; min-width: 0; }
+.cp .tk-filter-rechts input[type="search"] { width: 220px; max-width: 100%; }
+.cp .tk-schalter { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink-2); cursor: pointer; }
+.cp .tk-liste { list-style: none; margin: 0; padding: 0; }
+.cp .tk-liste li + li { border-top: 1px solid var(--linie); }
+.cp .tk-zeile {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px;
+  padding: 12px 16px; color: var(--ink); text-decoration: none; transition: background-color .2s var(--feder, ease);
+}
+@media (hover: hover) and (pointer: fine) { .cp .tk-zeile:hover { background: var(--flaeche-2); } }
+.cp .tk-zeile-haupt { display: grid; gap: 3px; min-width: 0; }
+.cp .tk-zeile-haupt b { font-size: 13.5px; font-weight: 600; }
+.cp .tk-meta { display: flex; flex-wrap: wrap; gap: 2px 10px; font-size: 11.5px; color: var(--ink-3); }
+.cp .tk-zeile-chips { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px; }
+.cp .tk-art { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-3); }
+.cp .tk-art-fehler { background: var(--kritisch); }
+.cp .tk-art-daten { background: var(--warnung); }
+.cp .tk-art-idee { background: var(--gut); }
+.cp .tk-art-frage { background: var(--serie-1, var(--ink-2)); }
+
+/* ---------- Melden ---------- */
+.cp .tk-formular { display: grid; gap: 14px; padding: 16px; }
+.cp .tk-formular input[type="text"], .cp .tk-formular select { width: 100%; max-width: none; }
+.cp .tk textarea {
+  width: 100%; padding: 8px 10px; border: 1px solid var(--linie-stark); border-radius: var(--r-mittel);
+  background: var(--flaeche); color: var(--ink); font: inherit; font-size: 13px; line-height: 1.45; resize: vertical;
+}
+.cp .tk textarea:focus-visible { outline: 2px solid var(--akzent); outline-offset: 2px; }
+.cp .tk-arten { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.cp .tk-arten legend { margin-bottom: 6px; padding: 0; font-size: 11.5px; font-weight: 500; color: var(--ink-2); }
+.cp .tk-art-wahl { position: relative; display: block; min-width: 0; cursor: pointer; }
+.cp .tk-art-wahl input { position: absolute; opacity: 0; pointer-events: none; }
+.cp .tk-art-wahl > span {
+  display: grid; gap: 2px; height: 100%; padding: 9px 11px; border: 1px solid var(--linie-stark); border-radius: var(--r-mittel);
+  background: var(--flaeche); transition: border-color .15s ease, background-color .15s ease;
+}
+.cp .tk-art-wahl b { font-size: 13px; font-weight: 600; }
+.cp .tk-art-wahl input:checked + span { border-color: var(--ink); background: var(--flaeche-2); box-shadow: inset 0 0 0 1px var(--ink); }
+.cp .tk-art-wahl input:focus-visible + span { outline: 2px solid var(--akzent); outline-offset: 2px; }
+.cp .tk-zwei { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 12px; }
+.cp .tk-aus { display: none; }
+.cp .tk-bild-feld { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.cp .tk-bild-feld img { display: block; max-width: 100%; max-height: 220px; border: 1px solid var(--linie); border-radius: var(--r-mittel); }
+.cp .tk-datei { display: inline-flex; align-items: center; gap: 6px; }
+.cp .tk-datei .ic, .cp .tk .btn .ic { width: 15px; height: 15px; }
+.cp .tk .btn { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+.cp .tk-knoepfe { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.cp .tk-knoepfe.tk-links-buendig { justify-content: flex-start; padding: 0 16px 16px; }
+.cp .tk-hinweise { display: grid; gap: 10px; align-content: start; padding: 16px; }
+.cp .tk-hinweise-kopf { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.cp .tk-hinweise-kopf .ic, .cp .tk-hinweise-leer .ic { width: 18px; height: 18px; flex: none; color: var(--ink-3); }
+.cp .tk-hinweise-leer { display: flex; gap: 10px; align-items: flex-start; color: var(--ink-3); font-size: 12.5px; }
+.cp .tk-hinweise-leer p { margin: 0; }
+.cp .tk-hinweis { display: grid; gap: 4px; padding: 10px 12px; border-radius: var(--r-mittel); background: var(--flaeche-2); }
+.cp .tk-hinweis b { font-size: 13px; }
+.cp .tk-hinweis p { margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--ink-2); }
+.cp .tk-hinweis a { justify-self: start; font-size: 12.5px; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--linie-stark); }
+.cp .tk-hinweise > .klein, .cp .tk-hinweise-schmal > .klein { margin: 0; }
+/* Schmal (eine Spalte): Hinweise direkt unter der Beschreibung statt ganz unten */
+.cp .tk-hinweise-schmal { display: none; }
+@media (max-width: 1099px) {
+  .cp .tk-melden .tk-hinweise { display: none; }
+  .cp .tk-hinweise-schmal:not(:empty) { display: grid; gap: 10px; }
+}
+
+/* ---------- Ein Ticket ---------- */
+.cp .tk-spalte { display: grid; gap: 16px; align-content: start; min-width: 0; }
+.cp .tk-ticket.gitter { margin-top: 0; }
+.cp .tk-inhalt { display: grid; gap: 14px; padding: 14px 16px 16px; }
+.cp .tk-bild { display: block; max-width: 100%; height: auto; border: 1px solid var(--linie); border-radius: var(--r-mittel); }
+.cp .tk-claude { border-color: color-mix(in srgb, var(--gut) 45%, var(--linie)); }
+.cp .tk-claude .karte-kopf { background: color-mix(in srgb, var(--gut) 7%, var(--flaeche)); }
+.cp .tk-antwort { display: grid; gap: 8px; padding: 14px 16px; }
+.cp .tk-antwort + .tk-antwort { border-top: 1px solid var(--linie); }
+.cp .tk-antwort-kopf { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.cp .tk-links { margin: 0; padding-left: 18px; font-size: 12.5px; }
+.cp .tk-links a { color: var(--ink); }
+.cp .tk-verlauf { list-style: none; margin: 0; padding: 6px 16px; }
+.cp .tk-verlauf li { display: grid; gap: 4px; padding: 10px 0 10px 14px; border-left: 2px solid var(--linie); }
+.cp .tk-verlauf li.tk-v-claude { border-left-color: var(--gut); }
+.cp .tk-verlauf li.tk-v-status { border-left-color: var(--linie-stark); }
+.cp .tk-v-kopf { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; font-size: 12.5px; color: var(--ink-2); }
+.cp .tk-v-kopf b { color: var(--ink); font-weight: 600; }
+.cp .tk-kommentar, .cp .tk-status-form { display: grid; gap: 10px; padding: 12px 16px 16px; }
+.cp .tk-kommentar { border-top: 1px solid var(--linie); }
+.cp .tk-kommentar .btn, .cp .tk-status-form .btn { justify-self: start; }
+.cp .tk-status-form select { width: 100%; max-width: none; }
+.cp .tk-details { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 14px; margin: 0; padding: 14px 16px; font-size: 13px; }
+.cp .tk-details dt { color: var(--ink-3); font-size: 12px; }
+.cp .tk-details dd { margin: 0; min-width: 0; }
+.cp .tk-details a { color: var(--ink); }
+.cp .tk-technik { margin: 0 16px 14px; font-size: 12.5px; }
+.cp .tk-technik summary { cursor: pointer; color: var(--ink-2); }
+.cp .tk-technik dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; margin: 8px 0; }
+.cp .tk-technik dt { color: var(--ink-3); }
+.cp .tk-technik dd { margin: 0; min-width: 0; }
+.cp .tk-pre {
+  margin: 6px 0 0; padding: 8px 10px; max-height: 260px; overflow-y: auto; border-radius: var(--r-mittel); background: var(--flaeche-2);
+  font-family: var(--schrift-mono); font-size: 11px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.cp .tk-claude-knoepfe { padding: 14px 16px 0; }
+.cp .tk-claude-text { display: block; margin: 12px 16px 16px; width: calc(100% - 32px) !important; font-family: var(--schrift-mono) !important; font-size: 11.5px !important; }
+.cp .tk-fuer-claude .karte-kopf p .mono { font-size: 11px; }
+
+@media (max-width: 760px) {
+  .cp .tk-arten { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cp .tk-zwei { grid-template-columns: minmax(0, 1fr); }
+  .cp .tk-zeile { grid-template-columns: auto minmax(0, 1fr); }
+  .cp .tk-zeile-chips { grid-column: 2; justify-content: flex-start; }
+  .cp .tk-filter-rechts, .cp .tk-filter-rechts input[type="search"] { width: 100%; }
+  .cp .tk-filter-rechts select { flex: 1 1 140px; }
+}

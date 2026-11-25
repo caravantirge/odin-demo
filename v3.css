@@ -1,0 +1,342 @@
+/* ODIN 3 – Gestaltungsebene über ODIN 2 (umschaltbar unten in der Seitenleiste, data-stil="v3").
+   Nach den Design-Skills in .claude/skills (better-ui, emil-design-eng, choreograph):
+   - Tiefe über weiche Schattenringe statt Rahmen; Rahmen nur noch für Trennlinien, Tabellen und Eingabefelder.
+   - Konzentrische Radien (außen = innen + Abstand), etwas weicher als ODIN 2.
+   - Bewegung nur mit Zweck: kräftiges ease-out, unter 300 ms, Druckgefühl auf Knöpfen (scale .97).
+     Was man oft am Tag sieht (Seitenwechsel, Listenzeilen), erscheint ohne Animation.
+   - Symbol-Strich passend zur Schrift: 1,5 px neben normaler, 2 px neben halbfetter Schrift.
+   - Hover-Effekte nur bei echter Maus, Scrollen bleibt in Listen und Dialogen.
+   Farben und Schriften bleiben die von Caravan Muster. */
+
+:root[data-stil="v3"] {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --weich: var(--ease-out);
+  --radius-sm: 6px; --radius-md: 8px; --radius-lg: 12px;
+  --app-grund: #F7F6F6;
+  --seite-grund: #FBFAFA;
+  --shadow-border:
+    0 0 0 1px oklch(0 0 0 / 0.06),
+    0 1px 2px -1px oklch(0 0 0 / 0.06),
+    0 2px 4px 0 oklch(0 0 0 / 0.04);
+  --shadow-border-hover:
+    0 0 0 1px oklch(0 0 0 / 0.08),
+    0 1px 2px -1px oklch(0 0 0 / 0.08),
+    0 2px 4px 0 oklch(0 0 0 / 0.06);
+  --shadow-pop:
+    0 0 0 1px oklch(0 0 0 / 0.06),
+    0 12px 32px -8px oklch(0 0 0 / 0.18),
+    0 3px 8px -3px oklch(0 0 0 / 0.08);
+  --knopf-glanz: inset 0 1px 0 oklch(1 0 0 / 0.18);
+  --punkte: oklch(0 0 0 / 0.075); --licht: oklch(1 0 0 / 0);
+  --wasserzeichen: oklch(0 0 0 / 0.028);
+  --punkte-maus: oklch(0 0 0 / 0.24); --licht-maus: oklch(1 0 0 / 0.6); --licht-leiste: oklch(0 0 0 / 0.035);
+  --spot: oklch(0 0 0 / 0.03); --spot-rand: oklch(0 0 0 / 0.22);
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-stil="v3"][data-theme="auto"] {
+    --app-grund: #0A0A0C;
+    --seite-grund: #0F0F11;
+    --shadow-border: 0 0 0 1px oklch(1 0 0 / 0.08);
+    --shadow-border-hover: 0 0 0 1px oklch(1 0 0 / 0.13);
+    --shadow-pop: 0 0 0 1px oklch(1 0 0 / 0.10), 0 16px 40px -12px oklch(0 0 0 / 0.7);
+    --knopf-glanz: inset 0 1px 0 oklch(1 0 0 / 0.10);
+    --punkte: oklch(1 0 0 / 0.085); --licht: oklch(1 0 0 / 0.05);
+    --wasserzeichen: oklch(1 0 0 / 0.022);
+    --punkte-maus: oklch(1 0 0 / 0.34); --licht-maus: oklch(1 0 0 / 0.07); --licht-leiste: oklch(1 0 0 / 0.05);
+    --spot: oklch(1 0 0 / 0.045); --spot-rand: oklch(1 0 0 / 0.32);
+  }
+}
+:root[data-stil="v3"][data-theme="dunkel"] {
+  --app-grund: #0A0A0C;
+  --seite-grund: #0F0F11;
+  --shadow-border: 0 0 0 1px oklch(1 0 0 / 0.08);
+  --shadow-border-hover: 0 0 0 1px oklch(1 0 0 / 0.13);
+  --shadow-pop: 0 0 0 1px oklch(1 0 0 / 0.10), 0 16px 40px -12px oklch(0 0 0 / 0.7);
+  --knopf-glanz: inset 0 1px 0 oklch(1 0 0 / 0.10);
+  --punkte: oklch(1 0 0 / 0.085); --licht: oklch(1 0 0 / 0.05);
+  --wasserzeichen: oklch(1 0 0 / 0.022);
+  --punkte-maus: oklch(1 0 0 / 0.34); --licht-maus: oklch(1 0 0 / 0.07); --licht-leiste: oklch(1 0 0 / 0.05);
+  --spot: oklch(1 0 0 / 0.045); --spot-rand: oklch(1 0 0 / 0.32);
+}
+
+/* ---------- Symbole: Strich passend zur Schrift (Raster 24, gezeigt mit 18 px -> Faktor .75) ---------- */
+[data-stil="v3"] .ic { stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }          /* = 1,5 px */
+[data-stil="v3"] .seite-menue a.aktiv .ic,
+[data-stil="v3"] .knopf.primaer .ic { stroke-width: 2.67; }                                        /* = 2 px */
+
+/* ---------- Rahmen und Seitenleiste ---------- */
+[data-stil="v3"] #odin-bereiche { background: var(--surface-100); }
+[data-stil="v3"] .seitenleiste { background: var(--seite-grund); }
+[data-stil="v3"] .seite-marke { border-bottom-color: transparent; }
+[data-stil="v3"] .seite-menue { gap: 1px; padding-inline: 8px; }
+[data-stil="v3"] .seite-gruppe { font-size: 11px; letter-spacing: .04em; text-transform: none; font-weight: 500; padding: 10px 10px 3px; }
+@media (max-height: 960px) { [data-stil="v3"] .seite-gruppe { padding: 6px 10px 2px; } }
+@media (max-height: 860px) { [data-stil="v3"] .seite-gruppe { padding: 4px 10px 1px; } }
+@media (max-height: 800px) { [data-stil="v3"] .seite-gruppe { padding: 3px 10px 1px; font-size: 10px; } }
+/* Nur Symbole (schmale Fenster): Gruppen als feine Linie, sonst ragt der Name über den Rand */
+@media (max-width: 1180px) {
+  [data-stil="v3"] .seite-gruppe { height: 1px; padding: 0; margin: 8px 6px; font-size: 0; background: var(--line); }
+  [data-stil="v3"] .seite-menue button.seite-gruppe[aria-expanded="false"] { height: 26px; margin: 4px 6px; background: none; font-size: 0; }
+}
+@media (max-width: 1180px) and (max-height: 800px) { [data-stil="v3"] .seite-gruppe { margin: 5px 6px; } }
+[data-stil="v3"] .seite-menue a {
+  padding: 0 10px; border-radius: var(--radius-md);
+  border: 1px solid transparent;                       /* Rand für den Kontrastmodus, Ring kommt per Schatten */
+  transition: background-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
+}
+[data-stil="v3"] .seite-menue a.aktiv {
+  background: var(--surface-100); color: var(--ink); font-weight: 600; box-shadow: var(--shadow-border);
+}
+[data-stil="v3"] .seite-menue a.aktiv::before { display: none; }
+[data-stil="v3"] .seite-menue .zahl { min-width: 20px; height: 18px; font-size: 11px; background: var(--surface-200); color: var(--ink-muted); box-shadow: 0 0 0 1px var(--line); }
+[data-stil="v3"] .seite-menue .zahl.rot { background: var(--accent); color: var(--on-accent); box-shadow: none; }
+[data-stil="v3"] .seite-fuss { border-top-color: transparent; }
+@media (hover: hover) and (pointer: fine) {
+  [data-stil="v3"] .seite-menue a:not(.aktiv):hover { background: oklch(0 0 0 / 0.04); color: var(--ink); }
+  [data-stil="v3"][data-theme="dunkel"] .seite-menue a:not(.aktiv):hover { background: oklch(1 0 0 / 0.06); }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-color-scheme: dark) {
+  [data-stil="v3"][data-theme="auto"] .seite-menue a:not(.aktiv):hover { background: oklch(1 0 0 / 0.06); }
+}
+
+/* ---------- Knöpfe: Schattenring statt Rahmen, Druckgefühl ---------- */
+[data-stil="v3"] .knopf,
+[data-stil="v3"] .design-knopf,
+[data-stil="v3"] .cp .btn,
+[data-stil="v3"] .cp button.mini,
+[data-stil="v3"] .cp .filter button,
+[data-stil="v3"] .cp .filter a {
+  border-color: transparent; box-shadow: var(--shadow-border);
+  transition: transform 160ms var(--ease-out), box-shadow 150ms ease, background-color 150ms ease, color 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+[data-stil="v3"] .knopf { height: 34px; border-radius: var(--radius-md); padding: 0 12px; }
+[data-stil="v3"] .knopf .ic { margin-left: -2px; }                       /* Symbolseite optisch 2 px enger */
+[data-stil="v3"] .knopf.primaer,
+[data-stil="v3"] .cp .btn-primaer,
+[data-stil="v3"] .cp .vor-form button[type="submit"],
+[data-stil="v3"] .cp .todo-form button[type="submit"] {
+  border-color: transparent;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 80%, #000), var(--knopf-glanz), 0 1px 2px oklch(0 0 0 / 0.12);
+}
+[data-stil="v3"] .knopf:active,
+[data-stil="v3"] .design-knopf:active,
+[data-stil="v3"] .filter-knopf:active,
+[data-stil="v3"] .cp button:active:not(:disabled),
+[data-stil="v3"] .stil-wahl button:active { transform: scale(0.97); }
+@media (hover: hover) and (pointer: fine) {
+  [data-stil="v3"] .knopf:hover,
+  [data-stil="v3"] .design-knopf:hover,
+  [data-stil="v3"] .cp .btn:hover,
+  [data-stil="v3"] .cp button.mini:hover,
+  [data-stil="v3"] .cp .filter button:hover { box-shadow: var(--shadow-border-hover); }
+  [data-stil="v3"] .knopf.primaer:hover { background: var(--accent-hover); }
+}
+[data-stil="v3"] .knopf.leise { box-shadow: none; }
+[data-stil="v3"] .filter { border-radius: var(--radius-md); padding: 3px; }
+[data-stil="v3"] .filter-knopf { border-radius: 6px; transition: transform 160ms var(--ease-out), background-color 150ms ease, color 150ms ease; }
+[data-stil="v3"] .filter-knopf.aktiv { box-shadow: var(--shadow-border); }   /* 6 px innen + 3 px Abstand ≈ 8 px außen */
+[data-stil="v3"] .cp .filter button.aktiv { box-shadow: none; }
+
+/* ---------- Eingabefelder behalten ihren Rand (Kontrast), nur weicher ---------- */
+[data-stil="v3"] .suche,
+[data-stil="v3"] .auswahl,
+[data-stil="v3"] .feld input,
+[data-stil="v3"] .feld select,
+[data-stil="v3"] .feld textarea,
+[data-stil="v3"] .cp input[type="search"],
+[data-stil="v3"] .cp input[type="text"],
+[data-stil="v3"] .cp input[type="date"],
+[data-stil="v3"] .cp input[type="number"],
+[data-stil="v3"] .cp select { border-radius: var(--radius-md); }
+[data-stil="v3"] .suche { height: 34px; }
+[data-stil="v3"] .auswahl { height: 34px; }
+
+/* ---------- Flächen: Karten mit Schattenring ---------- */
+/* Hintergrund: feines Punktraster und oben ein Hauch Licht – damit die Fläche lebt, ohne abzulenken.
+   Das Raster steht still, der Inhalt läuft darüber (kein Neuzeichnen beim Scrollen). */
+/* Logo (Caravan Muster) als Maske – eingebettet, damit es auch ohne Server (Datei, Vorschau) lädt */
+:root { --logo-maske: url("img/muster-logo.svg"); }
+[data-stil="v3"] .cp {
+  --r-klein: 6px; --r-mittel: 8px; --r-gross: 12px;
+  background: transparent;                          /* Grund und Raster liegen auf .rahmen, s. u. */
+}
+/* Grund, Raster und Licht für die ganze Fläche hinter dem Inhalt. Unter der Maus leuchten die Punkte etwas auf
+   (eigene Ebene, per Maske auf einen Kreis um die Maus begrenzt); Position kommt als --bx/--by aus cockpit.js. */
+[data-stil="v3"] .rahmen {
+  position: relative; isolation: isolate;
+  background-color: var(--app-grund);
+  background-image: radial-gradient(ellipse 70% 42% at 60% -10%, var(--licht), transparent 70%),
+                    radial-gradient(circle, var(--punkte) 1px, transparent 1.3px);
+  background-size: 100% 100%, 22px 22px;
+  background-position: 0 0, 11px 11px;
+}
+/* Handy: die Schublade (Seitenleiste, z-index 50) muss über dem Schleier (40) liegen – mit eigener Ebene auf .rahmen
+   läge der Schleier über der ganzen Schublade und nichts darin ließe sich antippen. Wasserzeichen gibt es dort nicht. */
+@media (max-width: 700px) {
+  [data-stil="v3"] .rahmen { isolation: auto; }
+}
+/* Das Firmenlogo als Hauch im Hintergrund: groß über die ganze Inhaltsfläche (rechts der Seitenleiste), einfarbig
+   in der Farbe der Fläche, kaum sichtbar. Auf dem Handy nicht – dort wäre es nur im Weg. */
+@media (min-width: 701px) {
+  [data-stil="v3"] .rahmen::before {
+    content: ""; position: absolute; z-index: -1; pointer-events: none;
+    inset: 6vh 4vw 6vh calc(236px + 4vw);
+    background: var(--wasserzeichen);
+    -webkit-mask: var(--logo-maske) center / contain no-repeat;
+    mask: var(--logo-maske) center / contain no-repeat;
+  }
+}
+@media (min-width: 701px) and (max-width: 1180px) {
+  [data-stil="v3"] .rahmen::before { left: calc(60px + 4vw); }
+}
+@media (hover: hover) and (pointer: fine) {
+  [data-stil="v3"] .rahmen::after {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background-image: radial-gradient(circle, var(--punkte-maus) 1.15px, transparent 1.45px),
+                      radial-gradient(520px circle at var(--bx, -999px) var(--by, -999px), var(--licht-maus), transparent 70%);
+    background-size: 22px 22px, 100% 100%;
+    background-position: 11px 11px, 0 0;
+    -webkit-mask-image: radial-gradient(300px circle at var(--bx, -999px) var(--by, -999px), #000 0%, rgba(0, 0, 0, .45) 45%, transparent 75%);
+    mask-image: radial-gradient(300px circle at var(--bx, -999px) var(--by, -999px), #000 0%, rgba(0, 0, 0, .45) 45%, transparent 75%);
+    opacity: 0; transition: opacity 300ms var(--ease-out);
+  }
+  [data-stil="v3"] .rahmen.maus-da::after { opacity: 1; }
+  /* Seitenleiste: ein weicher Lichtkegel folgt der Maus */
+  [data-stil="v3"] .seitenleiste { isolation: isolate; }
+  [data-stil="v3"] .seitenleiste::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(240px circle at var(--sx, -999px) var(--sy, -999px), var(--licht-leiste), transparent 70%);
+    opacity: 0; transition: opacity 250ms var(--ease-out);
+  }
+  [data-stil="v3"] .seitenleiste:hover::before { opacity: 1; }
+}
+/* Auf breiten Fenstern liegt die Seitenleiste im Fluss; der Lichtkegel braucht sie als Bezug (auf dem Handy ist
+   sie ohnehin fest positioniert, s. app.css) */
+@media (min-width: 701px) { [data-stil="v3"] .seitenleiste { position: relative; } }
+@media (prefers-reduced-motion: reduce) {
+  [data-stil="v3"] .rahmen::after, [data-stil="v3"] .seitenleiste::before { transition: none; }
+}
+[data-stil="v3"] .cp .karte,
+[data-stil="v3"] .cp .hinweis { border-color: transparent; box-shadow: var(--shadow-border); }
+[data-stil="v3"] .cp .kachel { border-top-color: var(--line); }
+[data-stil="v3"] .cp .pille { border-radius: 6px; }
+
+/* ---------- Seitenwechsel und Listen: ohne Animation (zig Mal am Tag) ---------- */
+[data-stil="v3"] .cp > *,
+[data-stil="v3"] .cp .dash:not(.bearbeiten) > *,
+[data-stil="v3"] .fahrzeuge tbody tr { animation: none; }
+[data-stil="v3"] .cp .puls::after { animation: none; opacity: 0; }   /* Dauerpulsieren lenkt ab; der rote Punkt reicht */
+
+/* ---------- Listen und Tabellen ---------- */
+[data-stil="v3"] .liste,
+[data-stil="v3"] .detail,
+[data-stil="v3"] .tabelle-rahmen,
+[data-stil="v3"] #inhalt,
+[data-stil="v3"] .dialog { overscroll-behavior: contain; }
+[data-stil="v3"] .zeile { transition: background-color 120ms ease; }
+@media (hover: hover) and (pointer: fine) {
+  [data-stil="v3"] .zeile:not(.gewaehlt):hover { background: color-mix(in srgb, var(--surface-200) 70%, transparent); }
+}
+[data-stil="v3"] .fahrzeuge th { font-size: 12px; font-weight: 500; color: var(--ink-muted); }
+
+/* ---------- Dialoge: aus der Mitte, 200 ms rein, 150 ms raus ---------- */
+[data-stil="v3"] .dialog {
+  border: 1px solid transparent; border-radius: 14px; box-shadow: var(--shadow-pop);
+  opacity: 1; transform: none;
+  transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out),
+              overlay 200ms allow-discrete, display 200ms allow-discrete;
+}
+[data-stil="v3"] .dialog[open] { animation: none; }
+@starting-style {
+  [data-stil="v3"] .dialog[open] { opacity: 0; transform: scale(0.96); }
+}
+[data-stil="v3"] .dialog:not([open]) { opacity: 0; transform: scale(0.98); transition-duration: 150ms; }
+[data-stil="v3"] .dialog::backdrop { background: oklch(0.2 0.01 20 / 0.32); backdrop-filter: blur(3px); }
+
+/* ---------- Meldung unten: kommt von unten, geht nach unten ---------- */
+@keyframes v3-meldung { from { opacity: 0; transform: translate(-50%, 100%); } }
+[data-stil="v3"] .meldung {
+  border-radius: 10px; box-shadow: var(--shadow-pop);
+  animation: v3-meldung 400ms ease both;
+}
+
+/* ---------- Kleine Fenster über dem Inhalt ---------- */
+[data-stil="v3"] #tip { border-radius: 8px; box-shadow: var(--shadow-pop); border-color: transparent; }
+
+/* ---------- Umschalter ODIN 2 / ODIN 3 ---------- */
+.seite-fuss { flex-wrap: nowrap; }
+.stil-wahl {
+  display: inline-flex; padding: 2px; gap: 2px; border-radius: var(--radius-md);
+  background: var(--surface-200);
+}
+.stil-wahl button {
+  height: 24px; padding: 0 8px; border: 0; white-space: nowrap; border-radius: calc(var(--radius-md) - 2px);
+  background: none; color: var(--ink-muted); font-size: 11px; font-weight: 600; cursor: pointer;
+  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), background-color 150ms ease, color 150ms ease;
+}
+.stil-wahl button[aria-pressed="true"] { background: var(--surface-100); color: var(--ink); box-shadow: 0 0 0 1px var(--line); }
+@media (max-width: 1180px) { .stil-wahl { display: none; } }
+
+/* Weniger Bewegung gewünscht: nur Deckkraft, keine Wege */
+@media (prefers-reduced-motion: reduce) {
+  [data-stil="v3"] .dialog, [data-stil="v3"] .dialog:not([open]) { transform: none; }
+  @starting-style { [data-stil="v3"] .dialog[open] { transform: none; } }
+  [data-stil="v3"] .meldung { animation: einblenden 200ms ease both; }
+  [data-stil="v3"] .knopf:active, [data-stil="v3"] .cp button:active:not(:disabled) { transform: none; }
+}
+
+/* ---------- Spotlight: Karten fangen das Licht dort, wo die Maus ist ----------
+   Fläche und Rand hellen um den Mauszeiger auf (Position kommt per --mx/--my aus cockpit.js). Nur mit echter Maus,
+   ein- und ausgeblendet in 200 ms; anklickbare Karten heben sich zusätzlich 1 px an. */
+@media (hover: hover) and (pointer: fine) {
+  [data-stil="v3"] .cp .karte, [data-stil="v3"] .cp .ag-tag { position: relative; }
+  /* Fläche: weicher Lichtkegel */
+  [data-stil="v3"] .cp .karte::after, [data-stil="v3"] .cp .ag-tag::after, [data-stil="v3"] .cp .pj-karte::after {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; border-radius: inherit;
+    opacity: 0; transition: opacity 200ms var(--ease-out);
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), var(--spot), transparent 70%);
+  }
+  /* Rand: nur der 1-px-Ring leuchtet (Maske schneidet das Innere aus) */
+  [data-stil="v3"] .cp .karte::before, [data-stil="v3"] .cp .ag-tag::before {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; border-radius: inherit;
+    padding: 1px; opacity: 0; transition: opacity 200ms var(--ease-out);
+    background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 0%), var(--spot-rand), transparent 70%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  }
+  [data-stil="v3"] .cp .karte:hover::after, [data-stil="v3"] .cp .ag-tag:hover::after, [data-stil="v3"] .cp .pj-karte:hover::after,
+  [data-stil="v3"] .cp .karte:hover::before, [data-stil="v3"] .cp .ag-tag:hover::before { opacity: 1; }
+  [data-stil="v3"] .cp .dash.bearbeiten .karte::before,
+  [data-stil="v3"] .cp .dash.bearbeiten .karte::after { display: none; }
+  [data-stil="v3"] .cp .pj-karte { transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out); }
+  [data-stil="v3"] .cp .pj-karte:hover { transform: translateY(-1px); box-shadow: var(--shadow-pop); }
+  [data-stil="v3"] .cp .ag-punkt:hover b { text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-stil="v3"] .cp .karte::after, [data-stil="v3"] .cp .ag-tag::after, [data-stil="v3"] .cp .pj-karte::after,
+  [data-stil="v3"] .cp .karte::before, [data-stil="v3"] .cp .ag-tag::before { transition: none; }
+  [data-stil="v3"] .cp .pj-karte:hover { transform: none; }
+}
+
+/* ---------- Dunkel: Hauptknöpfe weiß auf Schwarz statt Rot ----------
+   Rot bleibt Signal (Zähler, Warnungen, aktiver Bereich); große rote Flächen wirken im Dunkeln grell. */
+@media (prefers-color-scheme: dark) {
+  :root[data-stil="v3"][data-theme="auto"] .cp { --marke: var(--ink); --auf-marke: var(--app-grund); }
+  :root[data-stil="v3"][data-theme="auto"] .knopf.primaer { background: var(--ink); border-color: var(--ink); color: var(--app-grund); }
+  :root[data-stil="v3"][data-theme="auto"] :is(.knopf.primaer, .cp .btn-primaer, .cp .vor-form button[type="submit"], .cp .todo-form button[type="submit"]) {
+    box-shadow: 0 0 0 1px var(--ink), 0 1px 2px oklch(0 0 0 / 0.4); }
+}
+:root[data-stil="v3"][data-theme="dunkel"] .cp { --marke: var(--ink); --auf-marke: var(--app-grund); }
+:root[data-stil="v3"][data-theme="dunkel"] .knopf.primaer { background: var(--ink); border-color: var(--ink); color: var(--app-grund); }
+:root[data-stil="v3"][data-theme="dunkel"] :is(.knopf.primaer, .cp .btn-primaer, .cp .vor-form button[type="submit"], .cp .todo-form button[type="submit"]) {
+  box-shadow: 0 0 0 1px var(--ink), 0 1px 2px oklch(0 0 0 / 0.4); }
+
+/* Handy: Gruppenüberschriften in der Schublade als Text (die Regel für schmale Fenster macht sie sonst zur Linie) */
+@media (max-width: 700px) {
+  [data-stil="v3"] .seite-gruppe { height: auto; margin: 0; padding: 12px 10px 4px; font-size: 11px; background: none; }
+  [data-stil="v3"] .seite-menue button.seite-gruppe[aria-expanded="false"] { height: auto; margin: 0; padding: 12px 10px 4px; font-size: 11px; }
+  [data-stil="v3"] .seitenleiste { background: var(--seite-grund); }
+}

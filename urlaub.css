@@ -1,0 +1,70 @@
+/* ODIN · Urlaub – Anträge, Genehmigen, Kalender, Regeln (innerhalb von #inhalt.cp) */
+.cp .ul-reiter { margin: -6px 0 18px; }
+.cp .ul-jahr { font-family: var(--schrift-mono); font-size: 14px; min-width: 44px; text-align: center; }
+.cp .karte-kopf { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 14px 16px 10px; border-bottom: 1px solid var(--linie); }
+.cp .karte-kopf h2 { font-size: 14px; }
+.cp .karte-kopf .klein { margin: 4px 0 0; }
+.cp .ul-antrag { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 14px 16px 16px; }
+.cp .ul-antrag .ul-breit, .cp .ul-knoepfe.ul-breit { grid-column: 1 / -1; }
+.cp .ul-antrag input[type="date"], .cp .ul-antrag select, .cp .ul-antrag input[type="text"] { width: 100%; max-width: none; }
+.cp .ul-check { display: inline-flex; align-items: center; gap: 8px; height: 36px; font-size: 13px; color: var(--ink); }
+.cp .ul-knoepfe { display: flex; justify-content: flex-end; gap: 8px; }
+.cp .ul-liste { list-style: none; margin: 0; padding: 4px 8px 8px; display: grid; gap: 2px; }
+.cp .ul-zeile { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 8px; border-radius: 8px; }
+.cp .ul-zeile:hover { background: var(--flaeche-2); }
+.cp .ul-zeile-haupt { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; flex-wrap: wrap; }
+.cp .ul-zeile-rechts { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+.cp .ul-kommentar { flex-basis: 100%; display: flex; align-items: center; gap: 8px; margin: 2px 0 0; font-size: 12.5px; color: var(--ink-2); }
+.cp .ul-konflikte { flex-basis: 100%; list-style: none; margin: 6px 0 0; padding: 8px 10px; border-radius: 8px; background: var(--kritisch-weich);
+  display: grid; gap: 4px; font-size: 12.5px; color: var(--kritisch); }
+.cp .ul-konflikte li { display: flex; gap: 6px; align-items: flex-start; }
+.cp .ul-konflikte .ic { width: 13px; height: 13px; margin-top: 3px; flex: none; }
+.cp .ul-entscheide { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.cp .ul-entscheid { padding: 14px 16px; background: var(--flaeche); border: 1px solid var(--linie); border-radius: var(--r-gross); box-shadow: var(--shadow-border, none); display: grid; gap: 8px; }
+.cp .ul-entscheid.mit-konflikt { box-shadow: inset 3px 0 0 var(--kritisch), var(--shadow-border, 0 0 0 0 transparent); }
+.cp .ul-entscheid-kopf { display: flex; align-items: center; gap: 10px; }
+.cp .ul-entscheid-kopf > div:not(.ul-zeile-rechts) { display: grid; }
+.cp .ul-entscheid-form { display: flex; gap: 8px; align-items: center; }
+.cp .ul-entscheid-form input { flex: 1; max-width: none; }
+.cp .ul-monate { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 12px; }
+.cp .ul-monate button { padding: 5px 10px; border: 1px solid var(--linie); border-radius: 999px; background: var(--flaeche); color: var(--ink-2); font: inherit; font-size: 12.5px; cursor: pointer; }
+.cp .ul-monate button.aktiv { background: var(--akzent); border-color: var(--akzent); color: var(--auf-akzent); }
+.cp .ul-kalender-scroll { overflow-x: auto; overscroll-behavior-x: contain; }
+.cp .ul-kalender { border-collapse: separate; border-spacing: 2px; font-size: 12px; min-width: 100%; }
+.cp .ul-kalender thead th { font-weight: 500; color: var(--ink-3); font-size: 11px; text-align: center; padding: 4px 0; min-width: 22px; font-variant-numeric: tabular-nums; }
+.cp .ul-kalender thead th span { display: block; font-size: 10px; }
+.cp .ul-kalender thead th.we, .cp .ul-kalender thead th.ft { color: var(--kritisch); }
+.cp .ul-kalender tbody th { text-align: left; font-weight: 500; white-space: nowrap; padding: 0 10px 0 4px; }
+.cp .ul-kalender tbody th span { margin-left: 6px; }
+.cp .ul-kalender tr.ul-bereich th { padding: 10px 4px 4px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.cp .ul-tag { height: 24px; border-radius: 4px; background: var(--flaeche-2); }
+.cp .ul-tag.we, .cp .ul-legende i.we { background: var(--flaeche-3); }
+.cp .ul-tag.ft, .cp .ul-legende i.ft { background: #f6c9da; }
+.cp .ul-tag.sp, .cp .ul-legende i.sp { background: repeating-linear-gradient(45deg, var(--kritisch-weich), var(--kritisch-weich) 3px, transparent 3px, transparent 6px); }
+.cp .ul-tag.bu, .cp .ul-legende i.bu { background: #e6d6a8; }
+.cp .ul-tag.st-genehmigt, .cp .ul-legende i.st-genehmigt { background: var(--serie-1); }
+.cp .ul-tag.st-beantragt, .cp .ul-legende i.st-beantragt { background: repeating-linear-gradient(45deg, var(--serie-1), var(--serie-1) 3px, color-mix(in srgb, var(--serie-1) 35%, transparent) 3px, color-mix(in srgb, var(--serie-1) 35%, transparent) 6px); }
+.cp .ul-legende { display: flex; flex-wrap: wrap; gap: 14px; padding: 10px 16px 14px; font-size: 12px; color: var(--ink-2); }
+.cp .ul-legende span { display: inline-flex; align-items: center; gap: 6px; }
+.cp .ul-legende i { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+.cp .ul-regeln { display: grid; gap: 14px; }
+.cp .ul-inhalt { padding: 12px 16px 16px; display: grid; gap: 10px; }
+.cp .ul-gruppe { display: grid; gap: 8px; padding: 10px; border: 1px solid var(--linie); border-radius: 8px; }
+.cp .ul-gruppe-kopf { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 13px; }
+.cp .ul-gruppe-kopf input[type="text"] { max-width: 240px; }
+.cp .ul-gruppe-kopf input[type="number"] { width: 64px; }
+.cp .ul-zeitraum { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px; }
+.cp .ul-zeitraum input[type="text"] { max-width: 260px; }
+.cp .ul-personen { border-collapse: collapse; font-size: 13px; }
+.cp .ul-personen th { text-align: left; font-weight: 500; color: var(--ink-3); font-size: 11.5px; padding: 4px 12px 6px 0; }
+.cp .ul-personen td { padding: 4px 12px 4px 0; }
+.cp .ul-personen td:first-child { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.cp .ul-personen input[type="number"] { width: 80px; }
+.cp .pj-chip.leise { background: none; }
+@media (max-width: 900px) { .cp .ul-antrag { grid-template-columns: minmax(0, 1fr); } }
+.cp .ul-vorschau:empty { display: none; }
+.cp .ul-vorschau { display: grid; gap: 6px; font-size: 13px; }
+.cp .ul-vorschau .gut-text { color: var(--gut); }
+.cp .ul-vorschau .quelle-fehler { padding: 8px 10px; border-radius: 8px; background: var(--kritisch-weich); color: var(--kritisch); }
+.cp .ul-vorschlag { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0 0 14px; }
+.cp .ul-kalender tbody tr:not(.ul-bereich) th { text-transform: none; letter-spacing: 0; font-size: 12.5px; color: var(--ink); }
