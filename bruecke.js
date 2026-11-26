@@ -57,7 +57,7 @@
     return x ? x.ergebnis : null;
   };
   const api = new Proxy({}, { get: (_, name) => (...args) => ruf(String(name), args) });
-  window.pywebview = { api, web: true, demo: true };
+  const schnittstelle = { api, web: true, demo: true };       // erst nach dem Start setzen (sonst Anmeldung zu früh)
   document.documentElement.dataset.web = "1";
   document.documentElement.dataset.demo = "1";
 
@@ -69,6 +69,7 @@
   };
 
   fertig.then(() => {
+    window.pywebview = schnittstelle;
     window.dispatchEvent(new Event("pywebviewready"));
     lade.classList.add("weg");
     setTimeout(() => lade.remove(), 500);

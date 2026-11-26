@@ -1,93 +1,65 @@
-/* ODIN · Messe-Personal (#/messe) – eigene Gestaltung nach der Vorlage „ABF 2027 Personalplanung“:
-   großzügiger dunkelblauer Kopf, darunter auf hellem Grund die weiße Personalübersicht, mintfarbene Akzente.
-   Alles hängt an .ms bzw. .ms-dialog – andere Seiten bleiben unberührt. Die ODIN-Seitenleiste bleibt. */
+/* ODIN · Messe-Personal (#/messe) – in ODINs Gestaltung: Kopf wie die übrigen Seiten, Hausfarben aus app.css,
+   Karte und Tabelle wie im Cockpit. Alles hängt an .ms bzw. .ms-dialog – andere Seiten bleiben unberührt. */
 .ms, .ms-dialog {
-  --ms-blau: #0B2545;
-  --ms-blau-2: #13315C;
-  --ms-mint: #4FD1AE;
-  --ms-mint-dunkel: #0D7F64;
-  --ms-mint-weich: #E3F7F0;
-  --ms-grund: #F1F5F9;
-  --ms-flaeche: #FFFFFF;
-  --ms-ink: #0F1F33;
-  --ms-leise: #5B6B7F;
-  --ms-linie: #E3E9F0;
-  --ms-kopfzeile: #F7F9FB;
-  --ms-nein: #EEF1F4;
-  --ms-nein-text: #536274;
-  --ms-offen: #B7791F;
-  --ms-rand: clamp(16px, 3.6vw, 64px);
-  --ms-breite: 1280px;
-  --ms-r: 18px;
-  font-family: var(--schrift, system-ui, -apple-system, "Segoe UI", sans-serif);
+  /* ODIN-Hausfarben (app.css) – hell/dunkel folgt dem Design-Schalter wie überall */
+  --ms-blau: var(--ink);
+  --ms-mint: var(--accent);
+  --ms-mint-dunkel: var(--ink);
+  --ms-mint-weich: var(--surface-200);
+  --ms-grund: transparent;
+  --ms-flaeche: var(--surface-100);
+  --ms-ink: var(--ink);
+  --ms-leise: var(--ink-muted);
+  --ms-linie: var(--line);
+  --ms-kopfzeile: var(--surface-200);
+  --ms-nein: var(--surface-200);
+  --ms-nein-text: var(--ink-muted);
+  --ms-offen: var(--warning);
+  --ms-ja: var(--success);
+  --ms-ja-weich: var(--success-flaeche);
+  --ms-rand: 0px;
+  --ms-breite: 100%;
+  --ms-r: var(--r-gross, 12px);
+  font-family: var(--text, system-ui, -apple-system, "Segoe UI", sans-serif);
   color: var(--ms-ink);
 }
-@media (prefers-color-scheme: dark) {
-  :root[data-theme="auto"] :is(.ms, .ms-dialog) {
-    --ms-mint-dunkel: #5FE0BD; --ms-mint-weich: rgba(79, 209, 174, .14); --ms-grund: #0A111D; --ms-flaeche: #111B2B;
-    --ms-ink: #E6EDF5; --ms-leise: #93A3B8; --ms-linie: #1F2B3D; --ms-kopfzeile: #0E1726; --ms-nein: #1A2536;
-    --ms-nein-text: #A3B1C2; --ms-offen: #F2B44F;
-  }
-}
-:root[data-theme="dunkel"] :is(.ms, .ms-dialog) {
-  --ms-mint-dunkel: #5FE0BD; --ms-mint-weich: rgba(79, 209, 174, .14); --ms-grund: #0A111D; --ms-flaeche: #111B2B;
-  --ms-ink: #E6EDF5; --ms-leise: #93A3B8; --ms-linie: #1F2B3D; --ms-kopfzeile: #0E1726; --ms-nein: #1A2536;
-  --ms-nein-text: #A3B1C2; --ms-offen: #F2B44F;
-}
 
-/* Die Seite füllt die ganze Inhaltsfläche – Ränder setzt sie selbst */
-.cp:has(> .ms) { padding: 0; background: var(--ms-grund, #F1F5F9); }
-@media (prefers-color-scheme: dark) { :root[data-theme="auto"] .cp:has(> .ms) { background: #0A111D; } }
-:root[data-theme="dunkel"] .cp:has(> .ms) { background: #0A111D; }
-.ms { min-height: 100%; background: var(--ms-grund); display: flex; flex-direction: column; }
+.ms { display: flex; flex-direction: column; }
 .ms * { box-sizing: border-box; }
-.ms-breite { width: 100%; max-width: calc(var(--ms-breite) + 2 * var(--ms-rand)); margin-inline: auto; padding-inline: var(--ms-rand); }
+.ms-breite { width: 100%; }
 
-/* ---------------------------------------------------------- Kopf */
-.ms-kopf { background: radial-gradient(120% 140% at 85% -20%, var(--ms-blau-2) 0%, var(--ms-blau) 55%); color: #fff;
-  padding-block: 48px 64px; position: relative; overflow: hidden; }
-.ms-kopf::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--ms-mint); }
-.ms-kopf-oben { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; min-height: 36px; }
-.ms-marke { font-size: 13px; font-weight: 700; letter-spacing: .22em; color: rgba(255, 255, 255, .78); }
-.ms-messe { margin: 36px 0 0; display: inline-flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 700;
-  letter-spacing: .14em; text-transform: uppercase; color: var(--ms-mint); }
-.ms-messe::before { content: ""; width: 28px; height: 2px; background: var(--ms-mint); border-radius: 2px; }
-.ms-kopf h1 { margin: 12px 0 14px; font-size: clamp(36px, 4.6vw, 60px); line-height: 1.04; font-weight: 750;
-  letter-spacing: -.025em; color: #fff; }
-.ms-zeile { margin: 0; font-size: clamp(16px, 1.4vw, 19px); line-height: 1.5; color: rgba(255, 255, 255, .8); }
-
-.ms-umschalter { display: inline-flex; padding: 3px; border-radius: 999px; background: rgba(255, 255, 255, .08);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); }
-.ms-umschalter a { padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, .78);
+/* ---------------------------------------------------------- Kopf: wie die übrigen Seiten (.cp .kopf), Messe-Wahl rechts */
+.ms-umschalter { display: inline-flex; padding: 3px; border-radius: 999px; background: var(--surface-200); box-shadow: inset 0 0 0 1px var(--line); }
+.ms-umschalter a { padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 600; color: var(--ink-muted);
   text-decoration: none; transition: background-color .15s ease, color .15s ease; }
-.ms-umschalter a[aria-current="page"] { background: var(--ms-mint); color: var(--ms-blau); }
-@media (hover: hover) and (pointer: fine) { .ms-umschalter a:not([aria-current="page"]):hover { color: #fff; background: rgba(255, 255, 255, .1); } }
+.ms-umschalter a[aria-current="page"] { background: var(--surface-100); color: var(--ink); box-shadow: 0 1px 3px rgba(0, 0, 0, .12); }
+@media (hover: hover) and (pointer: fine) { .ms-umschalter a:not([aria-current="page"]):hover { color: var(--ink); } }
 
 /* ---------------------------------------------------------- Fläche und Karte */
-.ms-flaeche { flex: 1; padding-block: 40px 72px; }
+.ms-flaeche { flex: 1; padding-block: 0 48px; }
 .ms-karte { background: var(--ms-flaeche); border: 1px solid var(--ms-linie); border-radius: var(--ms-r);
-  box-shadow: 0 1px 2px rgba(15, 31, 51, .04), 0 12px 32px -18px rgba(15, 31, 51, .18); padding: 28px 32px 24px; }
+  box-shadow: var(--shadow-border, none); padding: 24px 28px 22px; }
 .ms-karte-kopf { display: flex; align-items: center; justify-content: space-between; gap: 16px 24px; flex-wrap: wrap; margin-bottom: 24px; }
-.ms-karte h2 { margin: 0; font-size: 24px; line-height: 1.2; font-weight: 700; letter-spacing: -.01em; color: var(--ms-ink); }
+.ms-karte h2 { margin: 0; font-size: 18px; line-height: 1.2; font-weight: 700; letter-spacing: -.01em; color: var(--ms-ink); }
 .ms-anzahl { margin: 4px 0 0; font-size: 14px; color: var(--ms-leise); }
 .ms-aktionen { display: flex; gap: 12px; flex-wrap: wrap; }
-.ms-knopf { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 18px;
-  border-radius: 10px; border: 1px solid var(--ms-linie); background: var(--ms-flaeche); color: var(--ms-ink);
-  font: inherit; font-size: 14.5px; font-weight: 600; cursor: pointer; white-space: nowrap;
+.ms-knopf { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 38px; padding: 0 16px;
+  border-radius: var(--r-mittel, 8px); border: 1px solid var(--line-strong); background: var(--ms-flaeche); color: var(--ms-ink);
+  font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; white-space: nowrap;
   transition: background-color .15s ease, border-color .15s ease, transform .1s ease; }
 .ms-knopf:active { transform: scale(.98); }
-.ms-knopf:focus-visible, .ms-link:focus-visible, .ms-umschalter a:focus-visible { outline: 2px solid var(--ms-mint); outline-offset: 2px; }
-.ms-primaer { background: var(--ms-mint); border-color: var(--ms-mint); color: var(--ms-blau); }
+.ms-knopf:focus-visible, .ms-link:focus-visible, .ms-umschalter a:focus-visible { outline: 2px solid var(--focus, var(--ink)); outline-offset: 2px; }
+.ms-primaer { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 @media (hover: hover) and (pointer: fine) {
-  .ms-knopf:not(.ms-primaer):hover { border-color: var(--ms-mint); }
-  .ms-primaer:hover { background: #3FC4A0; border-color: #3FC4A0; }
+  .ms-knopf:not(.ms-primaer):hover { border-color: var(--line-strong); background: var(--surface-200); }
+  .ms-primaer:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
 }
 .ms-knopf:disabled { opacity: .6; cursor: default; }
 .ms-hinweis { margin: -8px 0 16px; padding: 10px 14px; border-radius: 10px; background: var(--ms-mint-weich); color: var(--ms-ink); font-size: 13.5px; }
 
 /* ---------------------------------------------------------- Tabelle (scrollt auf schmalen Fenstern in sich) */
 .ms-tabelle-rahmen { overflow-x: auto; border: 1px solid var(--ms-linie); border-radius: 12px; -webkit-overflow-scrolling: touch; }
-.ms-tabelle-rahmen:focus-visible { outline: 2px solid var(--ms-mint); outline-offset: 2px; }
+.ms-tabelle-rahmen:focus-visible { outline: 2px solid var(--focus, var(--ink)); outline-offset: 2px; }
 .ms-tabelle { width: 100%; min-width: 900px; border-collapse: collapse; font-size: 14.5px; }
 .ms-tabelle th { height: 52px; padding: 8px 12px; text-align: left; font-size: 11.5px; line-height: 1.3; font-weight: 700; letter-spacing: .06em;
   text-transform: uppercase; color: var(--ms-leise); background: var(--ms-kopfzeile); border-bottom: 1px solid var(--ms-linie);
@@ -96,7 +68,7 @@
 .ms-tabelle th:last-child, .ms-tabelle td:last-child { padding-right: 16px; }
 .ms-tabelle td { height: 64px; padding: 10px 12px; border-bottom: 1px solid var(--ms-linie); vertical-align: middle; }
 .ms-tabelle tbody tr:last-child td { border-bottom: 0; }
-@media (hover: hover) and (pointer: fine) { .ms-tabelle tbody tr:not(.ms-leer-zeile):hover td { background: color-mix(in srgb, var(--ms-mint) 5%, transparent); } }
+@media (hover: hover) and (pointer: fine) { .ms-tabelle tbody tr:not(.ms-leer-zeile):hover td { background: var(--auswahl, var(--surface-200)); } }
 .ms-tabelle .ms-nr { width: 60px; text-align: center; }
 .ms-nr span { display: inline-grid; place-items: center; min-width: 30px; height: 30px; padding: 0 6px; border-radius: 999px;
   background: var(--ms-mint-weich); color: var(--ms-mint-dunkel); font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; }
@@ -106,7 +78,7 @@
 .ms-chip { display: inline-block; margin: 2px 6px 2px 0; padding: 3px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600;
   background: var(--ms-mint-weich); color: var(--ms-mint-dunkel); white-space: nowrap; }
 .ms-wert { display: inline-block; min-width: 56px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 700; text-align: center; }
-.ms-wert.ja { background: var(--ms-mint); color: var(--ms-blau); }
+.ms-wert.ja { background: var(--ms-ja-weich); color: var(--ms-ja); }
 .ms-wert.nein { background: var(--ms-nein); color: var(--ms-nein-text); }
 .ms-wert.offen { box-shadow: inset 0 0 0 1px currentColor; color: var(--ms-offen); }
 .ms-weste { white-space: nowrap; }
@@ -116,7 +88,7 @@
   color: var(--ms-mint-dunkel); cursor: pointer; }
 .ms-link + .ms-link { margin-left: 2px; }
 .ms-link.ms-weg { color: var(--ms-leise); }
-@media (hover: hover) and (pointer: fine) { .ms-link:hover { background: var(--ms-mint-weich); } .ms-link.ms-weg:hover { color: #C0262D; background: rgba(192, 38, 45, .08); } }
+@media (hover: hover) and (pointer: fine) { .ms-link:hover { background: var(--ms-mint-weich); } .ms-link.ms-weg:hover { color: var(--danger); background: var(--danger-flaeche); } }
 .ms-leer-zeile td { height: 96px; text-align: center; color: var(--ms-leise); }
 .ms-leer-zeile b { color: var(--ms-ink); }
 
@@ -132,12 +104,12 @@
 
 /* ---------------------------------------------------------- Formular */
 .ms-dialog { width: min(640px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 0; border-radius: var(--ms-r);
-  background: var(--ms-flaeche); color: var(--ms-ink); box-shadow: 0 24px 64px -16px rgba(11, 37, 69, .45); }
-.ms-dialog::backdrop { background: rgba(11, 37, 69, .45); }
+  background: var(--ms-flaeche); color: var(--ms-ink); box-shadow: 0 24px 64px -16px rgba(0, 0, 0, .4); }
+.ms-dialog::backdrop { background: rgba(0, 0, 0, .4); }
 .ms-dialog form { padding: 28px 28px 24px; display: flex; flex-direction: column; gap: 18px; }
 .ms-dialog-kopf h2 { margin: 0; font-size: 22px; font-weight: 700; color: var(--ms-ink); }
 .ms-dialog-kopf p { margin: 4px 0 0; font-size: 13.5px; color: var(--ms-leise); }
-.ms-dialog-kopf { padding-bottom: 16px; border-bottom: 3px solid var(--ms-mint); }
+.ms-dialog-kopf { padding-bottom: 16px; border-bottom: 1px solid var(--ms-linie); }
 .ms-feld { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; border: 0; min-width: 0; }
 .ms-feld > span, .ms-feld legend { font-size: 13px; font-weight: 650; color: var(--ms-ink); padding: 0; margin-bottom: 6px; }
 .ms-feld legend small { font-weight: 500; color: var(--ms-leise); }
@@ -145,7 +117,7 @@
 .ms-feld input[type="text"], .ms-feld input:not([type]), .ms-feld input[name] { font: inherit; }
 .ms-feld > input { height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--ms-linie); background: var(--ms-flaeche);
   color: var(--ms-ink); font-size: 15px; }
-.ms-feld > input:focus { outline: none; border-color: var(--ms-mint); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ms-mint) 30%, transparent); }
+.ms-feld > input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 14%, transparent); }
 .ms-feld-reihe { display: grid; grid-template-columns: minmax(0, 1fr) 160px; gap: 16px; }
 .ms-feld-drei { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .ms-bereich-wahl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
@@ -162,10 +134,10 @@
   box-shadow: inset 0 0 0 1px var(--ms-linie); }
 .ms-segment span { display: grid; place-items: center; height: 36px; border-radius: 8px; font-size: 13.5px; font-weight: 600; color: var(--ms-leise);
   transition: background-color .15s ease, color .15s ease; }
-.ms-segment input:checked + span { background: var(--ms-flaeche); color: var(--ms-ink); box-shadow: 0 1px 3px rgba(15, 31, 51, .16); }
+.ms-segment input:checked + span { background: var(--ms-flaeche); color: var(--ms-ink); box-shadow: 0 1px 3px rgba(0, 0, 0, .14); }
 .ms-segment input[value="Ja"]:checked + span { background: var(--ms-mint); color: var(--ms-blau); }
-:is(.ms-bereich-wahl, .ms-segment) input:focus-visible + span { outline: 2px solid var(--ms-mint); outline-offset: 2px; }
-.ms-fehler { margin: 0; padding: 10px 12px; border-radius: 10px; background: rgba(192, 38, 45, .08); color: #C0262D; font-size: 13.5px; }
+:is(.ms-bereich-wahl, .ms-segment) input:focus-visible + span { outline: 2px solid var(--focus, var(--ink)); outline-offset: 2px; }
+.ms-fehler { margin: 0; padding: 10px 12px; border-radius: 10px; background: var(--danger-flaeche); color: var(--danger); font-size: 13.5px; }
 .ms-dialog-fuss { display: flex; justify-content: flex-end; gap: 12px; padding-top: 4px; }
 
 /* ---------------------------------------------------------- Schmale Fenster */

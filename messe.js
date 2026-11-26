@@ -65,11 +65,9 @@ function kopf(info) {
   const umschalter = messen.length > 1 ? '<nav class="ms-umschalter" aria-label="Messe">' + messen.map((x) =>
     '<a href="#/messe' + (x.id === "abf-2027" ? "" : "/" + esc(x.id)) + '" aria-current="' + (x.id === M.messe ? "page" : "false") + '">' + esc(x.name) + "</a>").join("") + "</nav>" : "";
   const zeile = [info.zeitraum, info.ort].filter(Boolean).map(esc).join(" · ");
-  return '<header class="ms-kopf"><div class="ms-breite">' +
-    '<div class="ms-kopf-oben"><span class="ms-marke">CARAVAN MUSTER</span>' + umschalter + "</div>" +
-    '<p class="ms-messe">' + esc(info.titel || info.name) + "</p>" +
-    '<h1>Personalplanung</h1>' +
-    '<p class="ms-zeile">' + zeile + "</p></div></header>";
+  return '<div class="kopf"><div><h1>Personalplanung ' + esc(info.name || "") + "</h1><p>" +
+    esc(info.titel && info.titel !== info.name ? info.titel : "") + (info.titel && info.titel !== info.name && zeile ? " · " : "") + zeile + "</p></div>" +
+    (umschalter ? '<div class="kopf-aktionen">' + umschalter + "</div>" : "") + "</div>";
 }
 
 function tabelle(d) {
